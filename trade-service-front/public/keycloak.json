@@ -1,0 +1,10 @@
+{
+  "realm": "trade",
+  "auth-server-url": "http://localhost:8180/auth",
+  "ssl-required": "external",
+  "resource": "frontend",
+  "public-client": true,
+  "confidential-port": 0,
+  "clientId": "frontend",
+
+}
