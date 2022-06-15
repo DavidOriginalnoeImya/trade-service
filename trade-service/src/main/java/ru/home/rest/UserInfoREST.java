@@ -1,5 +1,7 @@
 package ru.home.rest;
 
+import io.quarkus.security.identity.IdentityProvider;
+import io.quarkus.security.identity.SecurityIdentity;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import ru.home.dto.UserFunctionDTO;
 
@@ -17,36 +19,32 @@ public class UserInfoREST {
     private static final Logger LOGGER = Logger.getLogger(UserInfoREST.class.getSimpleName());
 
     private static final List<UserFunctionDTO> storeWorkerFunctions = List.of(
-            new UserFunctionDTO().setFunctionName("Прием товара в магазин").setFunctionUri(""),
-            new UserFunctionDTO().setFunctionName("Продажа товара").setFunctionUri(""),
-            new UserFunctionDTO().setFunctionName("Заказ товара со склада").setFunctionUri(""),
-            new UserFunctionDTO().setFunctionName("Получение справки о товаре").setFunctionUri("")
+            new UserFunctionDTO().setFunctionName("Прием товара в магазин").setFunctionUri("/shop/product/acceptance"),
+            new UserFunctionDTO().setFunctionName("Продажа товара").setFunctionUri("/shop/product/sale"),
+            new UserFunctionDTO().setFunctionName("Заказ товара со склада").setFunctionUri("/shop/product/order"),
+            new UserFunctionDTO().setFunctionName("Получение справки о товаре").setFunctionUri("/shop/product/certificate")
     );
 
     private static final List<UserFunctionDTO> storeKeeperFunctions = List.of(
-            new UserFunctionDTO().setFunctionName("Список активных заявок").setFunctionUri(""),
-            new UserFunctionDTO().setFunctionName("Прием товара на склад").setFunctionUri(""),
-            new UserFunctionDTO().setFunctionName("Отпуск товара в магазин").setFunctionUri(""),
-            new UserFunctionDTO().setFunctionName("Получение справки о товаре").setFunctionUri("")
+            new UserFunctionDTO().setFunctionName("Список активных заказов").setFunctionUri("/storage/order/active"),
+            new UserFunctionDTO().setFunctionName("Прием товара на склад").setFunctionUri("/storage/product/acceptance"),
+            new UserFunctionDTO().setFunctionName("Отпуск товара в магазин").setFunctionUri("/storage/product/release"),
+            new UserFunctionDTO().setFunctionName("Получение справки о товаре").setFunctionUri("/storage/product/certificate")
     );
 
     @Inject
-    JsonWebToken jwt;
+    SecurityIdentity securityIdentity;
 
     @GET
     @Path("/functions")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getUserFunctionByRole() {
-        if (jwt != null) {
-            if (jwt.getGroups().contains("storeworker")) {
-                return Response.ok(storeWorkerFunctions).build();
-            }
-            else if (jwt.getGroups().contains("storekeeper")) {
-                return Response.ok(storeKeeperFunctions).build();
-            }
-            else return Response.status(425, "Unknown role").build();
+        if (securityIdentity.hasRole("storeworker")) {
+            return Response.ok(storeWorkerFunctions).build();
         }
-
-        return Response.status(426, "Invalid token").build();
+        else if (securityIdentity.hasRole("storekeeper")) {
+            return Response.ok(storeKeeperFunctions).build();
+        }
+        else return Response.status(425, "Unknown role").build();
     }
 }
