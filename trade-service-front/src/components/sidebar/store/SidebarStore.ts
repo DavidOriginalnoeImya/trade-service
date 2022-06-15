@@ -1,11 +1,7 @@
 import { makeAutoObservable } from "mobx";
-import {MenuItem} from "react-pro-sidebar";
-import React from "react";
 import axios from "axios";
-import {useKeycloak} from "@react-keycloak/web";
-import Keycloak from "keycloak-js";
 
-export interface roleFunction {
+export interface IRoleFunction {
     functionName: string;
     functionUri: string;
 }
@@ -13,27 +9,27 @@ export interface roleFunction {
 class SidebarStore {
     serverUrl = "http://localhost:8080"
 
-    userFunctions: roleFunction[] = [];
+    userFunctions: IRoleFunction[] = [];
 
-    constructor(keycloak: Keycloak) {
-        //makeAutoObservable(this);
-        this.getUserFunctionsFromServer(keycloak);
+    constructor() {
+        makeAutoObservable(this);
     }
 
-    public getUserFunctions(): roleFunction[] {
+    public getUserFunctions(authToken: string | undefined): IRoleFunction[] {
+        this.getUserFunctionsFromServer(authToken);
         return this.userFunctions;
     }
 
-    public setUserFunctions(userFunctions: roleFunction[]) {
+    public setUserFunctions(userFunctions: IRoleFunction[]) {
         this.userFunctions = userFunctions;
     }
 
-    private async getUserFunctionsFromServer(keycloak: Keycloak) {
+    private async getUserFunctionsFromServer(authToken: string | undefined) {
         try {
-            const {data} = await axios.get(this.serverUrl + "/api/user/functions",
+            const {data} = await axios.get<IRoleFunction>(this.serverUrl + "/api/user/functions",
                 {
                     headers: {
-                        "Authorization": "Bearer " + keycloak.token,
+                        "Authorization": "Bearer " + authToken,
                     }
                 }
             );
@@ -48,4 +44,6 @@ class SidebarStore {
     }
 }
 
-export default SidebarStore;
+const sidebarStore = new SidebarStore();
+
+export default sidebarStore;

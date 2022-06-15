@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import keycloakClient from "./utils/keycloak/keycloakClient";
 import {AuthClientError, AuthClientEvent, AuthClientTokens} from "@react-keycloak/core/lib/types";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 const onTokens = (tokens: AuthClientTokens) => {
     console.log(tokens);

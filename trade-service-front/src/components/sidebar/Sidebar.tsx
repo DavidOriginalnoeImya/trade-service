@@ -3,17 +3,16 @@ import {Menu, MenuItem, ProSidebar, SidebarHeader, SubMenu} from "react-pro-side
 import 'react-pro-sidebar/dist/css/styles.css';
 import {useKeycloak} from "@react-keycloak/web";
 import styles from "./Sidebar.module.less";
-import { Link } from "react-router-dom";
-import sideBarStore from "./store/SidebarStore";
 import SidebarMenu from "./SidebarMenu";
 import {observer} from "mobx-react-lite";
-import SidebarStore from "./store/SidebarStore";
 import sidebarStore from "./store/SidebarStore";
 
 const Sidebar = () => {
     const { keycloak } = useKeycloak();
 
-    const sidebarStore = new SidebarStore(keycloak);
+    useEffect(() => {
+        sidebarStore.getUserFunctions(keycloak.token)
+    },[keycloak.token])
 
     return (
         <ProSidebar className={styles.sidebar}>
@@ -21,10 +20,10 @@ const Sidebar = () => {
                 <div className={styles.headerContent}> Система фирменной торговли </div>
             </SidebarHeader>
             <Menu>
-                <SidebarMenu sidebarMenuData={ sidebarStore.getUserFunctions() }/>
+                <SidebarMenu sidebarMenuData={ sidebarStore.userFunctions }/>
             </Menu>
         </ProSidebar>
     );
 };
 
-export default Sidebar;
+export default observer(Sidebar);
