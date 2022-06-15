@@ -2,10 +2,10 @@ import React, {useEffect} from 'react';
 import {Menu, MenuItem, ProSidebar, SidebarHeader, SubMenu} from "react-pro-sidebar";
 import 'react-pro-sidebar/dist/css/styles.css';
 import {useKeycloak} from "@react-keycloak/web";
-import styles from "./Sidebar.module.less";
 import SidebarMenu from "./SidebarMenu";
 import {observer} from "mobx-react-lite";
 import sidebarStore from "./store/SidebarStore";
+import "./Sidebar.css"
 
 const Sidebar = () => {
     const { keycloak } = useKeycloak();
@@ -15,9 +15,9 @@ const Sidebar = () => {
     },[keycloak.token])
 
     return (
-        <ProSidebar className={styles.sidebar}>
-            <SidebarHeader className={styles.sidebarHeader}>
-                <div className={styles.headerContent}> Система фирменной торговли </div>
+        <ProSidebar>
+            <SidebarHeader className="sidebar-header">
+                Система фирменной торговли
             </SidebarHeader>
             <Menu>
                 <SidebarMenu sidebarMenuData={ sidebarStore.userFunctions }/>

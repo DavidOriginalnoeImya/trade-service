@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {Col, Container, Form, ToastContainer} from "react-bootstrap";
-import styles from "./Form.module.less"
+import './Form.css';
 
 const StoreProductAcceptForm = () => {
     const [productName, setProductName] = useState("")
@@ -8,7 +8,7 @@ const StoreProductAcceptForm = () => {
     const [productCity, setProductCity] = useState("")
 
     return (
-        <div className={styles.form}>
+        <div className="form-container">
             <Container className="m-lg-2 mt-2">
                 <Form>
                     <Form.Group className="mb-3">
@@ -26,7 +26,7 @@ const StoreProductAcceptForm = () => {
                         </Col>
                     </Form.Group>
                     <Col sm="3">
-                        <Form.Control className="mt-4" type="submit" value="Сохранить"/>
+                        <Form.Control className="mt-4" type="submit" value="Принять товар"/>
                     </Col>
                 </Form>
             </Container>
