@@ -1,3 +1,34 @@
 .form-container {
     width: 100%;
 }
+
+.list-group {
+    max-width: 450px;
+    width: 450px;
+}
+
+.product-input {
+    max-width: 300px;
+    width: 300px;
+}
+
+.add-button {
+    margin-left: 20px;
+    width: 130px;
+    max-width: 130px;
+}
+
+.select-block {
+    display: flex;
+    margin-top: -25px;
+}
+
+.create-cert-button {
+    max-width: 450px;
+    width: 450px;
+}
+
+.product-del-button {
+    float: right;
+    margin-top: 5px;
+}
