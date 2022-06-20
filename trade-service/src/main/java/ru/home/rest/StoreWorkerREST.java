@@ -26,9 +26,9 @@ public class StoreWorkerREST {
     @POST
     @Path("/certificate/create")
     @Consumes(MediaType.APPLICATION_JSON)
-    public void createAvailableCertificate(@Context HttpHeaders headers, ProductsListDTO products) {
+    public void createAvailableCertificate(@Context HttpHeaders headers, List<String> products) {//ProductsListDTO products) {
         LOGGER.info(products == null);
 
-        storeWorkerController.createAvailableCertificate(products.getProducts());
+        storeWorkerController.createAvailableCertificate(products);
     }
 }

@@ -98,7 +98,7 @@ public class DocumentCreator {
             XWPFTableRow row = table.getRow(index + 1);
 
             List<XWPFTableCell> cellsList = row.getTableCells();
-            customizeTableCell(cellsList.get(0), String.valueOf(index), "700");
+            customizeTableCell(cellsList.get(0), String.valueOf(index + 1), "700");
             customizeTableCell(cellsList.get(1), content.get(index), "2000");
             customizeTableCell(cellsList.get(2), "25", "2000");
             customizeTableCell(cellsList.get(3), "35", "2000");
