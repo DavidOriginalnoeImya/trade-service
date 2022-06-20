@@ -1,6 +1,7 @@
 package ru.home.util;
 
 import org.apache.poi.xwpf.usermodel.*;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import javax.enterprise.context.ApplicationScoped;
 import java.io.FileOutputStream;
@@ -13,6 +14,10 @@ import java.util.Map;
 
 @ApplicationScoped
 public class DocumentCreator {
+
+    @ConfigProperty(name = "document.available.certificate.name", defaultValue = "available-certificate.docx")
+    String availableCertificateName;
+
     private final static Map<String, String> monthNamesByNumber;
 
     static {
@@ -41,7 +46,7 @@ public class DocumentCreator {
             document.createParagraph();
             addTable(document, products);
 
-            document.write(new FileOutputStream("file.docx"));
+            document.write(new FileOutputStream(availableCertificateName));
         }
         catch (IOException e) {
             e.printStackTrace();

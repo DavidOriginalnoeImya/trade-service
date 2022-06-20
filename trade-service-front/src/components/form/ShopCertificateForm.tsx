@@ -22,7 +22,13 @@ const ShopCertificateForm = () => {
     const createCertificateClicked = (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault();
 
-        RequestService.getAvailableCertificate(selectedProducts, keycloak.token);
+        const fileDownload = require('js-file-download');
+
+        RequestService.getAvailableCertificate(selectedProducts, keycloak.token)
+            .then((response) => {
+                if (response !== undefined)
+                    fileDownload(response.data, "Справка.docx");
+            });
     }
 
     return (
