@@ -5,6 +5,8 @@
 .list-group {
     max-width: 450px;
     width: 450px;
+    max-height: 206px;
+    overflow-y: auto;
 }
 
 .product-input {
@@ -35,8 +37,16 @@
 }
 
 .product-table {
-    margin-top: 20px;
     overflow-y: auto;
-    max-height: 400px;
-    height: 400px;
+    max-height: 220px;
+    margin-top: 25px;
+    margin-right: 20px;
+}
+
+.create-check-button {
+    float: right;
+    width: 250px;
+    max-width: 250px;
+    margin-top: 0!important;
+    margin-right: 20px;
 }

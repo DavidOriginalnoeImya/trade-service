@@ -20,4 +20,8 @@ public class StoreWorkerController {
     public void createAvailableCertificate(List<String> products) {
         documentCreator.writeCertificate(products);
     }
+
+    public void createCheck() {
+
+    }
 }
