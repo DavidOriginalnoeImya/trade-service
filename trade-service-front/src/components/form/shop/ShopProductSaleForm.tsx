@@ -4,8 +4,11 @@ import '../Form.css';
 // @ts-ignore
 import * as NumericInput from "react-numeric-input";
 import {MdOutlineClose} from "react-icons/md";
+import {useKeycloak} from "@react-keycloak/web";
+import {RequestService} from "../../../utils/RequestService";
+import fileDownload from "js-file-download";
 
-type Product = {
+export type Product = {
     name: string;
     city: string;
     quantity: number;
@@ -17,6 +20,8 @@ const StoreProductAcceptForm = () => {
     const [productQuantity, setProductQuantity] = useState(0);
     const [selectedProducts, setSelectedProducts] = useState([] as Product[]);
 
+    const { keycloak } = useKeycloak();
+
     const createOptionList = (items: string[]) => {
         return items.map((item, index) => (
             <option key={index}> { item } </option>
@@ -24,7 +29,20 @@ const StoreProductAcceptForm = () => {
     }
 
     const formCheckButtonClicked = (event: React.MouseEvent<HTMLElement>) => {
+        event.preventDefault();
 
+        if (selectedProducts.length > 0) {
+            const fileDownload = require('js-file-download');
+
+            RequestService.getCheck(selectedProducts, keycloak.token)
+                .then((response) => {
+                    if (response !== undefined)
+                        fileDownload(response.data, "Чек.docx");
+                });
+        }
+        else {
+            alert("Список товаров пуст")
+        }
     }
 
     const addButtonCLicked = (event: React.MouseEvent<HTMLElement>) => {
@@ -82,7 +100,7 @@ const StoreProductAcceptForm = () => {
                         <Form.Label style={{marginTop: "7px"}}> {"Содержимое чека:"} </Form.Label>
                         <Form.Control
                             className="create-check-button"
-                            onClick={addButtonCLicked}
+                            onClick={formCheckButtonClicked}
                             type="submit"
                             value="Сформировать чек"/>
                     </Col>

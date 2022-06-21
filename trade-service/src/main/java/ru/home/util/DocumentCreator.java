@@ -2,21 +2,24 @@ package ru.home.util;
 
 import org.apache.poi.xwpf.usermodel.*;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
+import ru.home.model.Product;
 
 import javax.enterprise.context.ApplicationScoped;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @ApplicationScoped
 public class DocumentCreator {
 
     @ConfigProperty(name = "document.available.certificate.name", defaultValue = "available-certificate.docx")
     String availableCertificateName;
+
+    @ConfigProperty(name = "document.product.check.name", defaultValue = "product-check.docx")
+    String productCheckName;
 
     private final static Map<String, String> monthNamesByNumber;
 
@@ -36,7 +39,31 @@ public class DocumentCreator {
         monthNamesByNumber.put("12", "   декабря    ");
     }
 
-    public void writeCertificate(List<String> products) {
+    public byte[] writeCheck(List<Product> products) {
+        try (XWPFDocument document = new XWPFDocument()) {
+            addFormerParagraph(document, "Иванов Д.А.");
+            addFormDateParagraph(document);
+            document.createParagraph();
+            addTitleParagraph(document, "Товарный чек №3");
+            document.createParagraph();
+            addTable(
+                    document,
+                    List.of("№", "Наименование товара", "Код товара", "Количество, шт", "Цена, руб", "Сумма, руб"),
+                    convertProductsToCertTable(products)
+            );
+
+            document.write(new FileOutputStream(productCheckName));
+
+            return Files.readAllBytes(java.nio.file.Path.of(productCheckName));
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return "Check creation error".getBytes(StandardCharsets.UTF_8);
+    }
+
+    public byte[] writeCertificate(List<Product> products) {
         try (XWPFDocument document = new XWPFDocument()) {
             addFormerParagraph(document, "Иванов Д.А.");
             addFormDateParagraph(document);
@@ -44,13 +71,21 @@ public class DocumentCreator {
             addTitleParagraph(document, "Справка №3");
             addTitleParagraph(document, "о наличии товара во всех магазинах сети");
             document.createParagraph();
-            addTable(document, products);
+            addTable(
+                    document,
+                    List.of("№", "Наименование товара", "Код товара", "Количество, шт"),
+                    convertProductsToAvailableCert(products)
+            );
 
             document.write(new FileOutputStream(availableCertificateName));
+
+            return Files.readAllBytes(java.nio.file.Path.of(availableCertificateName));
         }
         catch (IOException e) {
             e.printStackTrace();
         }
+
+        return "Certificate creation error".getBytes(StandardCharsets.UTF_8);
     }
 
     private void addFormerParagraph(XWPFDocument document, String formerName) {
@@ -93,20 +128,21 @@ public class DocumentCreator {
         customizeParagraphFont(titleRun, "Times New Roman", 14);
     }
 
-    private void addTable(XWPFDocument document, List<String> content) {
-        XWPFTable table = document.createTable(content.size() + 1, 4);
+    private void addTable(XWPFDocument document, List<String> header, List<List<String>> content) {
+        XWPFTable table = document.createTable(content.size() + 1, header.size());
         table.setTableAlignment(TableRowAlign.CENTER);
 
-        fillTableHeader(table.getRow(0), List.of("№", "Наименование товара", "Код товара", "Количество, шт"));
+        fillTableHeader(table.getRow(0), header);
 
-        for (int index = 0; index < content.size(); ++index) {
-            XWPFTableRow row = table.getRow(index + 1);
+        for (int rowIndex = 0; rowIndex < content.size(); ++rowIndex) {
+            XWPFTableRow row = table.getRow(rowIndex + 1);
 
             List<XWPFTableCell> cellsList = row.getTableCells();
-            customizeTableCell(cellsList.get(0), String.valueOf(index + 1), "700");
-            customizeTableCell(cellsList.get(1), content.get(index), "2000");
-            customizeTableCell(cellsList.get(2), "25", "2000");
-            customizeTableCell(cellsList.get(3), "35", "2000");
+            customizeTableCell(cellsList.get(0), String.valueOf(rowIndex + 1), "700");
+
+            for (int colIndex = 0; colIndex < content.get(rowIndex).size(); ++colIndex) {
+                customizeTableCell(cellsList.get(colIndex + 1), content.get(rowIndex).get(colIndex), "2000");
+            }
         }
     }
 
@@ -138,5 +174,34 @@ public class DocumentCreator {
         cell.getParagraphs().get(0).setSpacingAfter(0);
         customizeParagraphFont(cell.getParagraphs().get(0).getRuns().get(0), "Times New Roman", 12);
         cell.setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
+    }
+
+    private List<List<String>> convertProductsToCertTable(List<Product> products) {
+        List<List<String>> productTable = new ArrayList<>();
+
+        for (Product product: products) {
+            productTable.add(List.of(
+                    product.getName(),
+                    "1",
+                    String.valueOf(product.getQuantity()),
+                    "10",
+                    String.valueOf(10 * product.getQuantity())
+            ));
+        }
+
+        return productTable;
+    }
+
+    private List<List<String>> convertProductsToAvailableCert(List<Product> products) {
+        List<List<String>> productTable = new ArrayList<>();
+
+        for (Product product: products) {
+            productTable.add(List.of(
+                    product.getName(),
+                    "1", "10"
+            ));
+        }
+
+        return productTable;
     }
 }
