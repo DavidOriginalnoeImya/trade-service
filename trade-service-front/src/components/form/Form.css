@@ -23,9 +23,10 @@
     margin-top: -25px;
 }
 
-.create-cert-button {
+.form-input {
     max-width: 450px;
     width: 450px;
+    padding-top: 5px;
 }
 
 .product-del-button {
