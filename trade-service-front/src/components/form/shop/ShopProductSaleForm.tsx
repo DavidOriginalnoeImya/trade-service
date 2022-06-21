@@ -1,14 +1,26 @@
 import React, {useState} from 'react';
-import {Col, Container, Dropdown, DropdownButton, Form, ToastContainer} from "react-bootstrap";
+import {Col, Container, Dropdown, DropdownButton, Form, Table, ToastContainer} from "react-bootstrap";
 import '../Form.css';
+// @ts-ignore
 import * as NumericInput from "react-numeric-input";
 
+type Product = {
+    name: string;
+    city: string;
+    quantity: string;
+}
 
 const StoreProductAcceptForm = () => {
-    const [productName, setProductName] = useState("");
-    const [productPrice, setProductPrice] = useState("");
-    const [productCity, setProductCity] = useState("");
-    const [productQuantity, setProductQuantity] = useState("");
+    const [productName, setProductName] = useState("Тест");
+    const [productCity, setProductCity] = useState("Тест");
+    const [productQuantity, setProductQuantity] = useState("Тест");
+    const [selectedProducts, setSelectedProducts] = useState([] as Product[]);
+
+    const addButtonCLicked = (event: React.MouseEvent<HTMLElement>) => {
+        event.preventDefault();
+
+        setSelectedProducts([...selectedProducts, {name: productName, city: productCity, quantity: productQuantity}]);
+    }
 
     return (
         <div className="form-container">
@@ -47,7 +59,35 @@ const StoreProductAcceptForm = () => {
                         </Col>
                     </Form.Group>
                     <Col className="form-input">
-                        <Form.Control className="mt-4" type="submit" value="Сформировать чек"/>
+                        <Form.Control className="mt-4" onClick={addButtonCLicked} type="submit" value="Сформировать чек"/>
+                    </Col>
+
+                    <Col className="product-table">
+                        <Table striped bordered hover responsive>
+                            <thead>
+                                <tr>
+                                    <th>№</th>
+                                    <th>Название товара</th>
+                                    <th>Город производства</th>
+                                    <th>Количество</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {
+                                    selectedProducts.length > 0 ? selectedProducts.map((product, index) => (
+                                        <tr>
+                                            <th>{ index + 1 }</th>
+                                            <th>{ product.name }</th>
+                                            <th>{ product.city }</th>
+                                            <th>{ product.quantity }</th>
+                                        </tr>
+                                    )) :
+                                        <tr>
+                                            <td style={{textAlign: "center"}} colSpan={4}>Список товаров пуст</td>
+                                        </tr>
+                                }
+                            </tbody>
+                        </Table>
                     </Col>
                 </Form>
             </Container>
