@@ -30,7 +30,7 @@ const ShopCertificateForm = () => {
     const createCertificateClicked = (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault();
 
-        if (productName.length > 0) {
+        if (selectedProducts.length > 0) {
             const fileDownload = require('js-file-download');
 
             RequestService.getAvailableCertificate(selectedProducts, keycloak.token)

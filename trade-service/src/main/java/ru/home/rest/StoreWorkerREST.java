@@ -5,6 +5,8 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.jboss.logging.Logger;
 import ru.home.controller.StoreWorkerController;
+import ru.home.dto.DTOConverter;
+import ru.home.dto.ProductNamesDTO;
 import ru.home.dto.ProductsListDTO;
 import ru.home.model.Product;
 
@@ -27,9 +29,6 @@ public class StoreWorkerREST {
     @Inject
     JsonWebToken jwt;
 
-    @ConfigProperty(name = "document.available.certificate.name", defaultValue = "available-certificate.docx")
-    String availableCertificateName;
-
     @Inject
     StoreWorkerController storeWorkerController;
 
@@ -37,9 +36,11 @@ public class StoreWorkerREST {
     @Path("/certificate/create")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
-    public Response createAvailableCertificate(List<Product> products) {
+    public Response createAvailableCertificate(ProductNamesDTO productNames) throws IOException {
+        LOGGER.info(productNames.getProducts());
+
         return Response
-                .ok(storeWorkerController.createAvailableCertificate(products))
+                .ok(storeWorkerController.createAvailableCertificate(DTOConverter.getProductsFromProductName(productNames)))
                 .header("Content-Disposition", "attachment; filename=\"Справка.docx\"")
                 .build();
     }
@@ -48,9 +49,9 @@ public class StoreWorkerREST {
     @Path("/check/create")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
-    public Response createCheck(List<Product> products) throws IOException {
+    public Response createCheck(List<Product> products) {
         return Response
-                .ok(Files.readAllBytes(java.nio.file.Path.of("product-check.docx")))
+                .ok(storeWorkerController.createCheck(products))
                 .header("Content-Disposition", "attachment; filename=\"Чек.docx\"")
                 .build();
     }

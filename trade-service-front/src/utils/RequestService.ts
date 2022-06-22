@@ -3,9 +3,11 @@ import {Product} from "../components/form/shop/ShopProductSaleForm";
 
 export class RequestService {
     public static async getAvailableCertificate(products: string[], authToken: string | undefined) {
+        console.log(JSON.stringify({productNames: products}))
+
         try {
             return await axios.post("http://localhost:8080/api/storeworker/certificate/create",
-                JSON.stringify(products),
+                JSON.stringify({productNames: products}),
                 {
                     headers: {
                         "Authorization": "Bearer " + authToken,
