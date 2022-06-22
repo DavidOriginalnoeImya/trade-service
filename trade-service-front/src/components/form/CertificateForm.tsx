@@ -1,11 +1,15 @@
-import React, {useState} from 'react';
+import React, {FC, useState} from 'react';
 import {Button, Col, Container, Form, FormControl, InputGroup, ListGroup} from "react-bootstrap";
-import '../Form.css';
+import './Form.css';
 import {MdDelete, MdOutlineClose} from "react-icons/md";
-import {RequestService} from "../../../utils/RequestService";
+import {RequestService} from "../../utils/RequestService";
 import {useKeycloak} from "@react-keycloak/web";
 
-const ShopCertificateForm = () => {
+interface ICertificateForm {
+    shopsCheckBox: boolean;
+}
+
+const CertificateForm: FC<ICertificateForm> = ({shopsCheckBox}) => {
     const [productName, setProductName] = useState("");
     const [selectedProducts, setSelectedProducts] = useState([] as string[]);
     const [checkAllShops, setCheckAllShops] = useState(false);
@@ -68,12 +72,16 @@ const ShopCertificateForm = () => {
                                 onClick={addButtonClicked}
                             />
                         </div>
-                        <Form.Check
-                            style={{marginTop: "20px"}}
-                            type="checkbox"
-                            label="Проверять наличие во всех магазинах сети"
-                            onClick={allShopCheckboxClicked}
-                        />
+
+                        {shopsCheckBox &&
+                            <Form.Check
+                                style={{marginTop: "20px"}}
+                                type="checkbox"
+                                label="Проверять наличие во всех магазинах сети"
+                                onClick={allShopCheckboxClicked}
+                            />
+                        }
+
                         <Form.Control
                             className="mt-4 form-input"
                             type="submit"
@@ -106,4 +114,4 @@ const ShopCertificateForm = () => {
     );
 };
 
-export default ShopCertificateForm;
+export default CertificateForm;

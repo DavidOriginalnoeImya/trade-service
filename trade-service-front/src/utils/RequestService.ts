@@ -1,5 +1,5 @@
 import axios from "axios";
-import {Product} from "../components/form/shop/ShopProductSaleForm";
+import {Product} from "../components/form/ProductSaleForm";
 
 export class RequestService {
     public static async getAvailableCertificate(products: string[], authToken: string | undefined) {

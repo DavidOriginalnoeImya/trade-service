@@ -1,11 +1,11 @@
-import React, {useState} from 'react';
+import React, {FC, useState} from 'react';
 import {Col, Container, Dropdown, DropdownButton, Form, Table, ToastContainer} from "react-bootstrap";
-import '../Form.css';
+import './Form.css';
 // @ts-ignore
 import * as NumericInput from "react-numeric-input";
 import {MdOutlineClose} from "react-icons/md";
 import {useKeycloak} from "@react-keycloak/web";
-import {RequestService} from "../../../utils/RequestService";
+import {RequestService} from "../../utils/RequestService";
 import fileDownload from "js-file-download";
 
 export type Product = {
@@ -14,13 +14,23 @@ export type Product = {
     quantity: number;
 }
 
-const StoreProductAcceptForm = () => {
+interface IProductSaleForm {
+    addButtonName: string;
+    formButtonName: string;
+    containsLabelName: string;
+    formButtonAction: (selectedProducts: Product[]) => void
+}
+
+const StoreProductAcceptForm: FC<IProductSaleForm> = ({
+                                                          addButtonName,
+                                                          formButtonName,
+                                                          containsLabelName,
+                                                          formButtonAction
+}) => {
     const [productName, setProductName] = useState("Товар1");
     const [productCity, setProductCity] = useState("Город1");
     const [productQuantity, setProductQuantity] = useState(0);
     const [selectedProducts, setSelectedProducts] = useState([] as Product[]);
-
-    const { keycloak } = useKeycloak();
 
     const createOptionList = (items: string[]) => {
         return items.map((item, index) => (
@@ -32,13 +42,7 @@ const StoreProductAcceptForm = () => {
         event.preventDefault();
 
         if (selectedProducts.length > 0) {
-            const fileDownload = require('js-file-download');
-
-            RequestService.getCheck(selectedProducts, keycloak.token)
-                .then((response) => {
-                    if (response !== undefined)
-                        fileDownload(response.data, "Товарный чек.docx");
-                });
+            formButtonAction(selectedProducts);
         }
         else {
             alert("Список товаров пуст")
@@ -94,37 +98,38 @@ const StoreProductAcceptForm = () => {
                             className="mt-4"
                             onClick={addButtonCLicked}
                             type="submit"
-                            value="Добавить товар в чек"/>
+                            value={addButtonName}/>
                     </Col>
                     <Col style={{marginTop: "25px"}}>
-                        <Form.Label style={{marginTop: "7px"}}> {"Содержимое чека:"} </Form.Label>
+                        <Form.Label style={{marginTop: "7px"}}> {containsLabelName} </Form.Label>
                         <Form.Control
                             className="create-check-button"
                             onClick={formCheckButtonClicked}
                             type="submit"
-                            value="Сформировать чек"/>
+                            value={formButtonName}/>
                     </Col>
                     <Col className="product-table">
                         <Table striped bordered hover responsive>
                             <thead>
                                 <tr>
-                                    <th>№</th>
-                                    <th>Название товара</th>
-                                    <th>Город производства</th>
-                                    <th>Количество</th>
-                                    <th>Удалить</th>
+                                    <th style={{width:"40px", maxWidth:"40px", textAlign:"center"}}>№</th>
+                                    <th className="table-column">Название товара</th>
+                                    <th className="table-column">Город производства</th>
+                                    <th className="table-column">Количество</th>
+                                    <th className="table-column">Удалить</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {
                                     selectedProducts.length > 0 ? selectedProducts.map((product, index) => (
                                         <tr key={index}>
-                                            <th>{ index + 1 }</th>
-                                            <th>{ product.name }</th>
-                                            <th>{ product.city }</th>
-                                            <th>{ product.quantity }</th>
-                                            <th>
+                                            <th style={{width:"40px", maxWidth:"40px", textAlign:"center"}}>{ index + 1 }</th>
+                                            <th className="table-column">{ product.name }</th>
+                                            <th className="table-column">{ product.city }</th>
+                                            <th className="table-column">{ product.quantity }</th>
+                                            <th className="table-column">
                                                 <MdOutlineClose
+                                                    style={{marginRight: "45%"}}
                                                     className="product-del-button"
                                                     onClick={() => deleteButtonClicked(index)}
                                                 />

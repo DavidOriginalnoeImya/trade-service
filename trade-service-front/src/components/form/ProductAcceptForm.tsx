@@ -1,12 +1,26 @@
 import React, {useState} from 'react';
 import {Col, Container, Form, ToastContainer} from "react-bootstrap";
-import '../Form.css';
+import './Form.css';
 
 const StoreProductAcceptForm = () => {
     const [productName, setProductName] = useState("");
     const [productPrice, setProductPrice] = useState("");
     const [productCity, setProductCity] = useState("");
     const [productQuantity, setProductQuantity] = useState("");
+
+    const acceptButtonClicked = (event: React.MouseEvent<HTMLElement>) => {
+        event.preventDefault();
+
+        if (productName && productPrice && productCity && productQuantity) {
+            setProductName("");
+            setProductPrice("");
+            setProductCity("");
+            setProductQuantity("");
+        }
+        else {
+            alert("Все поля должны быть заполнены")
+        }
+    }
 
     return (
         <div className="form-container">
@@ -31,7 +45,12 @@ const StoreProductAcceptForm = () => {
                         </Col>
                     </Form.Group>
                     <Col style={{width: "450px", maxWidth: "450px"}}>
-                        <Form.Control className="mt-4" type="submit" value="Принять товар"/>
+                        <Form.Control
+                            className="mt-4"
+                            type="submit"
+                            value="Принять товар"
+                            onClick={acceptButtonClicked}
+                        />
                     </Col>
                 </Form>
             </Container>
