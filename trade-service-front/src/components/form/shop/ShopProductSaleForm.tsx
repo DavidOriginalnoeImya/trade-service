@@ -37,7 +37,7 @@ const StoreProductAcceptForm = () => {
             RequestService.getCheck(selectedProducts, keycloak.token)
                 .then((response) => {
                     if (response !== undefined)
-                        fileDownload(response.data, "Чек.docx");
+                        fileDownload(response.data, "Товарный чек.docx");
                 });
         }
         else {
@@ -54,8 +54,8 @@ const StoreProductAcceptForm = () => {
             alert("Количество должно быть больше нуля")
     }
 
-    const deleteButtonClicked = (productName: string) => {
-        setSelectedProducts(selectedProducts.filter(product => productName !== product.name))
+    const deleteButtonClicked = (productIndex: number) => {
+        setSelectedProducts(selectedProducts.filter((product, index) => productIndex !== index))
     }
 
     return (
@@ -126,7 +126,7 @@ const StoreProductAcceptForm = () => {
                                             <th>
                                                 <MdOutlineClose
                                                     className="product-del-button"
-                                                    onClick={() => deleteButtonClicked(product.name)}
+                                                    onClick={() => deleteButtonClicked(index)}
                                                 />
                                             </th>
                                         </tr>

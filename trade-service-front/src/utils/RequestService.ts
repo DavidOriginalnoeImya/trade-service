@@ -3,17 +3,15 @@ import {Product} from "../components/form/shop/ShopProductSaleForm";
 
 export class RequestService {
     public static async getAvailableCertificate(products: string[], authToken: string | undefined) {
-        console.log(JSON.stringify({productNames: products}))
-
         try {
             return await axios.post("http://localhost:8080/api/storeworker/certificate/create",
-                JSON.stringify({productNames: products}),
+                JSON.stringify({products: products}),
                 {
                     headers: {
                         "Authorization": "Bearer " + authToken,
                         "content-type": "application/json",
-                        responseType: 'blob'
-                    }
+                    },
+                    responseType: 'blob'
                 }
             );
         }
@@ -30,8 +28,8 @@ export class RequestService {
                     headers: {
                         "Authorization": "Bearer " + authToken,
                         "content-type": "application/json",
-                        responseType: 'blob'
-                    }
+                    },
+                    responseType: 'blob'
                 }
             );
         }

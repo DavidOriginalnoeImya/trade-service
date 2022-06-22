@@ -8,6 +8,7 @@ import {useKeycloak} from "@react-keycloak/web";
 const ShopCertificateForm = () => {
     const [productName, setProductName] = useState("");
     const [selectedProducts, setSelectedProducts] = useState([] as string[]);
+    const [checkAllShops, setCheckAllShops] = useState(false);
 
     const { keycloak } = useKeycloak();
 
@@ -44,6 +45,10 @@ const ShopCertificateForm = () => {
         }
     }
 
+    const allShopCheckboxClicked = () => {
+        setCheckAllShops(!checkAllShops);
+    }
+
     return (
         <div className="form-container">
             <Container className="m-lg-2 mt-2">
@@ -55,6 +60,7 @@ const ShopCertificateForm = () => {
                                           value={productName}
                                           onChange={event => setProductName(event.target.value)}
                             />
+
                             <Form.Control
                                 className="mt-4 add-button"
                                 type="submit"
@@ -62,6 +68,12 @@ const ShopCertificateForm = () => {
                                 onClick={addButtonClicked}
                             />
                         </div>
+                        <Form.Check
+                            style={{marginTop: "20px"}}
+                            type="checkbox"
+                            label="Проверять наличие во всех магазинах сети"
+                            onClick={allShopCheckboxClicked}
+                        />
                         <Form.Control
                             className="mt-4 form-input"
                             type="submit"
