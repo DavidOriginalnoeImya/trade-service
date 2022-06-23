@@ -17,6 +17,7 @@ public class UserInfoREST {
     private static final Logger LOGGER = Logger.getLogger(UserInfoREST.class.getSimpleName());
 
     private static final List<UserFunctionDTO> storeWorkerFunctions = List.of(
+            new UserFunctionDTO().setFunctionName("Список активных заказов").setFunctionUri("/shop/order/active"),
             new UserFunctionDTO().setFunctionName("Прием товара в магазин").setFunctionUri("/shop/product/acceptance"),
             new UserFunctionDTO().setFunctionName("Продажа товара").setFunctionUri("/shop/product/sale"),
             new UserFunctionDTO().setFunctionName("Заказ товара со склада").setFunctionUri("/shop/product/order"),

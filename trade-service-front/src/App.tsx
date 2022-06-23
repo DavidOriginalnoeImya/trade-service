@@ -5,12 +5,14 @@ import Sidebar from "./components/sidebar/Sidebar";
 import keycloakClient from "./utils/keycloak/keycloakClient";
 import {useKeycloak} from "@react-keycloak/web";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import StoreOrderForm from "./components/form/store/StoreOrderForm";
+import StoreOrderForm from "./components/form/StoreOrderForm";
 import CertificateForm from "./components/form/CertificateForm";
 import ShopProductSaleForm, {Product} from "./components/form/ProductSaleForm";
 import ProductAcceptForm from "./components/form/ProductAcceptForm";
 import {RequestService} from "./utils/RequestService";
 import fileDownload from "js-file-download";
+import ShopActiveOrderForm from "./components/form/ShopActiveOrderForm";
+import StoreActiveOrderForm from "./components/form/StoreActiveOrderForm";
 
 function App() {
     const { keycloak } = useKeycloak();
@@ -33,6 +35,10 @@ function App() {
             <BrowserRouter>
                 <Sidebar/>
                 <Routes>
+                    <Route
+                        path="/shop/order/active"
+                        element={<ShopActiveOrderForm key="ShopForm0" />}
+                    />
                     <Route
                         path="/shop/product/acceptance"
                         element={<ProductAcceptForm key="ShopForm1" />}
@@ -67,7 +73,7 @@ function App() {
                     />
                     <Route
                         path="/storage/order/active"
-                        element={<StoreOrderForm key="StoreForm1" />}
+                        element={<StoreActiveOrderForm key="StoreForm1" />}
                     />
                     <Route
                         path="/storage/product/acceptance"
@@ -77,7 +83,7 @@ function App() {
                         path="/storage/product/release"
                         element={
                             <ShopProductSaleForm
-                                key="ShopForm4"
+                                key="StoreForm3"
                                 addButtonName="Добавить товар"
                                 formButtonName="Сформировать накладную"
                                 containsLabelName="Содержимое накладной:"
@@ -88,6 +94,10 @@ function App() {
                     <Route
                         path="/storage/product/certificate"
                         element={<CertificateForm key="StoreForm4" shopsCheckBox={ false }/>}
+                    />
+                    <Route
+                        path="/storage/order"
+                        element={<StoreOrderForm key="StoreForm5" />}
                     />
                 </Routes>
             </BrowserRouter>
