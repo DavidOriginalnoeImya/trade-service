@@ -4,6 +4,7 @@ import './Form.css';
 import {MdDelete, MdOutlineClose} from "react-icons/md";
 import {RequestService} from "../../utils/RequestService";
 import {useKeycloak} from "@react-keycloak/web";
+import List from "../List";
 
 interface ICertificateForm {
     shopsCheckBox: boolean;
@@ -93,20 +94,30 @@ const CertificateForm: FC<ICertificateForm> = ({shopsCheckBox}) => {
                             "Список запрашиваемых товаров:" :
                             "Список запрашиваемых товаров пуст")}
                         <br/><br/>
-                        <ListGroup className="list-group">
-                            {
-                                selectedProducts.map((product, index) => (
-                                    <ListGroup.Item key={ index }>
-                                        { product }
-                                        <MdOutlineClose
-                                            className="product-del-button"
-                                            title="Удалить"
-                                            onClick={() => deleteButtonClicked(product)}
-                                        />
-                                    </ListGroup.Item>
-                                ))
+                        {/*<ListGroup className="list-group">*/}
+                        {/*    {*/}
+                        {/*        selectedProducts.map((product, index) => (*/}
+                        {/*            <ListGroup.Item key={ index }>*/}
+                        {/*                { product }*/}
+                        {/*                <MdOutlineClose*/}
+                        {/*                    className="product-del-button"*/}
+                        {/*                    title="Удалить"*/}
+                        {/*                    onClick={() => deleteButtonClicked(product)}*/}
+                        {/*                />*/}
+                        {/*            </ListGroup.Item>*/}
+                        {/*        ))*/}
+                        {/*    }*/}
+                        {/*</ListGroup>*/}
+                        <List
+                            items={selectedProducts}
+                            actionComponent={
+                                <MdOutlineClose
+                                    className="product-del-button"
+                                    title="Удалить"
+                                    onClick={() => deleteButtonClicked(product)}
+                                />
                             }
-                        </ListGroup>
+                        />
                     </Form.Group>
                 </Form>
             </Container>

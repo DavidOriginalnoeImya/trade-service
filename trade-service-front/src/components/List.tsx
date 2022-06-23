@@ -4,21 +4,17 @@ import {MdOutlineClose} from "react-icons/md";
 
 interface IList {
     items: string[];
-    itemAction: () => void;
+    actionComponent: React.ReactNode;
 }
 
-const List: FC<IList> = ({items, itemAction}) => {
+const List: FC<IList> = ({items, actionComponent}) => {
     return (
         <ListGroup className="list-group">
             {
                 items.map((item, index) => (
                     <ListGroup.Item key={ index }>
                         { item }
-                        <MdOutlineClose
-                            className="product-del-button"
-                            title="Удалить"
-                            onClick={() => itemAction()}
-                        />
+                        { actionComponent }
                     </ListGroup.Item>
                 ))
             }
