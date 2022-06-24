@@ -2,7 +2,7 @@ package ru.home.rest;
 
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.jboss.logging.Logger;
-import ru.home.controller.StoreWorkerController;
+import ru.home.controller.ShopWorkerController;
 import ru.home.dto.DTOConverter;
 import ru.home.dto.ProductNamesDTO;
 import ru.home.model.Product;
@@ -14,14 +14,14 @@ import javax.ws.rs.core.Response;
 import java.util.List;
 
 @Path("/api/storeworker")
-public class StoreWorkerREST {
-    private static final Logger LOGGER = Logger.getLogger(StoreWorkerREST.class.getSimpleName());
+public class ShopWorkerREST {
+    private static final Logger LOGGER = Logger.getLogger(ShopWorkerREST.class.getSimpleName());
 
     @Inject
     JsonWebToken jwt;
 
     @Inject
-    StoreWorkerController storeWorkerController;
+    ShopWorkerController shopWorkerController;
 
     @POST
     @Path("/certificate/create")
@@ -29,7 +29,7 @@ public class StoreWorkerREST {
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response createAvailableCertificate(ProductNamesDTO productNames) {
         return Response
-                .ok(storeWorkerController.createAvailableCertificate(DTOConverter.getProductsFromProductName(productNames)))
+                .ok(shopWorkerController.createAvailableCertificate(DTOConverter.getProductsFromProductName(productNames)))
                 .header("Content-Disposition", "attachment; filename=\"Справка.docx\"")
                 .build();
     }
@@ -40,7 +40,7 @@ public class StoreWorkerREST {
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response createCheck(List<Product> products) {
         return Response
-                .ok(storeWorkerController.createCheck(products))
+                .ok(shopWorkerController.createCheck(products))
                 .header("Content-Disposition", "attachment; filename=\"Чек.docx\"")
                 .build();
     }

@@ -16,7 +16,7 @@ import java.util.List;
 public class UserInfoREST {
     private static final Logger LOGGER = Logger.getLogger(UserInfoREST.class.getSimpleName());
 
-    private static final List<UserFunctionDTO> storeWorkerFunctions = List.of(
+    private static final List<UserFunctionDTO> shopWorkerFunctions = List.of(
             new UserFunctionDTO().setFunctionName("Список активных заказов").setFunctionUri("/shop/order/active"),
             new UserFunctionDTO().setFunctionName("Прием товара в магазин").setFunctionUri("/shop/product/acceptance"),
             new UserFunctionDTO().setFunctionName("Продажа товара").setFunctionUri("/shop/product/sale"),
@@ -48,7 +48,7 @@ public class UserInfoREST {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getUserFunctionByRole() {
         if (securityIdentity.hasRole("storeworker")) {
-            return Response.ok(storeWorkerFunctions).build();
+            return Response.ok(shopWorkerFunctions).build();
         }
         else if (securityIdentity.hasRole("storekeeper")) {
             return Response.ok(storeKeeperFunctions).build();

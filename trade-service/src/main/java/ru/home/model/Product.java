@@ -4,7 +4,7 @@ public class Product {
     private String name;
     private String city;
 
-    private int quantity;
+    private float price;
 
     public String getName() {
         return name;
@@ -26,17 +26,13 @@ public class Product {
         return this;
     }
 
-    public int getQuantity() {
-        return quantity;
+    public float getPrice() {
+        return price;
     }
 
-    public Product setQuantity(int quantity) {
-        this.quantity = quantity;
+    public Product setPrice(float price) {
+        this.price = price;
 
         return this;
     }
-
-
-
-
 }

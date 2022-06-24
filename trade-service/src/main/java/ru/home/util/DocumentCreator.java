@@ -68,7 +68,7 @@ public class DocumentCreator {
             addFormerParagraph(document, "Иванов Д.А.");
             addFormDateParagraph(document);
             document.createParagraph();
-            addTitleParagraph(document, "Справка №3");
+            addTitleParagraph(document, "Справка");
             addTitleParagraph(document, "о наличии товара во всех магазинах сети");
             document.createParagraph();
             addTable(
@@ -180,13 +180,13 @@ public class DocumentCreator {
         List<List<String>> productTable = new ArrayList<>();
 
         for (Product product: products) {
-            productTable.add(List.of(
-                    product.getName(),
-                    "1",
-                    String.valueOf(product.getQuantity()),
-                    "10",
-                    String.valueOf(10 * product.getQuantity())
-            ));
+//            productTable.add(List.of(
+//                    product.getName(),
+//                    "1",
+//                    String.valueOf(product.getQuantity()),
+//                    "10",
+//                    String.valueOf(10 * product.getQuantity())
+//            ));
         }
 
         return productTable;

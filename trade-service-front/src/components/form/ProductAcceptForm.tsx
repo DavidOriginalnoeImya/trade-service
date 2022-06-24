@@ -1,6 +1,8 @@
 import React, {useState} from 'react';
 import {Col, Container, Form, ToastContainer} from "react-bootstrap";
 import './Form.css';
+import {RequestService} from "../../utils/RequestService";
+import {useKeycloak} from "@react-keycloak/web";
 
 const StoreProductAcceptForm = () => {
     const [productName, setProductName] = useState("");
@@ -8,14 +10,23 @@ const StoreProductAcceptForm = () => {
     const [productCity, setProductCity] = useState("");
     const [productQuantity, setProductQuantity] = useState("");
 
+    const { keycloak } = useKeycloak();
+
     const acceptButtonClicked = (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault();
 
         if (productName && productPrice && productCity && productQuantity) {
-            setProductName("");
-            setProductPrice("");
-            setProductCity("");
-            setProductQuantity("");
+            RequestService
+                .acceptProduct({
+                    name: productName,
+                    city: productCity,
+                    price: parseFloat(productPrice)
+                }, parseInt(productQuantity), keycloak.token);
+
+            // setProductName("");
+            // setProductPrice("");
+            // setProductCity("");
+            // setProductQuantity("");
         }
         else {
             alert("Все поля должны быть заполнены")

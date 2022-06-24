@@ -10,7 +10,7 @@ public class DTOConverter {
         List<Product> products = new ArrayList<>();
 
         for (String productName: productNames.getProducts()) {
-            products.add(new Product().setName(productName).setCity("").setQuantity(0));
+            products.add(new Product().setName(productName).setCity("").setPrice(0));
         }
 
         return products;

@@ -1,6 +1,12 @@
 import axios from "axios";
 import {Product} from "../components/form/ProductSaleForm";
 
+export type ProductAcceptDTO = {
+    name: string,
+    price: number,
+    city: string
+}
+
 export class RequestService {
     public static async getAvailableCertificate(products: string[], authToken: string | undefined) {
         try {
@@ -35,6 +41,27 @@ export class RequestService {
         }
         catch (e) {
             console.warn("Ошибка при получении чека с сервера")
+        }
+    }
+
+    public static async acceptProduct(
+        product: ProductAcceptDTO,
+        productQuantity: number,
+        authToken: string | undefined
+    ) {
+        try {
+            await axios.post("http://localhost:8080/api/storekeeper/product/accept",
+                JSON.stringify( {product: product, productQuantity: productQuantity} ),
+                {
+                    headers: {
+                        "Authorization": "Bearer " + authToken,
+                        "content-type": "application/json",
+                    },
+                }
+            );
+        }
+        catch (e) {
+            console.warn("Ошибка приема товара")
         }
     }
 }
