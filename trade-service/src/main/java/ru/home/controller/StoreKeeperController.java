@@ -7,6 +7,7 @@ import io.vertx.mutiny.sqlclient.Tuple;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.jboss.logging.Logger;
 import ru.home.dto.ProductNamesDTO;
+import ru.home.model.CheckProduct;
 import ru.home.model.Product;
 import ru.home.util.DocumentCreator;
 
@@ -89,6 +90,11 @@ public class StoreKeeperController {
         return products;
     }
 
+    public byte[] createInvoice(List<Product> products) {
+        dbController.updateStorageSlots(products);
+        return documentCreator.writeInvoice(products);
+    }
+
     public List<Float> getProductPrices(String productName, String productCity) {
         List<Float> products = new ArrayList<>();
 
@@ -101,4 +107,13 @@ public class StoreKeeperController {
         return products;
     }
 
+    public int getProductQuantityFromStorage(String productName, String productCity, String productPrice) {
+        RowSet<Row> rows = dbController.getProductQuantityFromStorage(productName, productCity, productPrice);
+
+        if (rows.rowCount() > 0) {
+            return rows.iterator().next().getInteger("sum");
+        }
+
+        return 0;
+    }
 }

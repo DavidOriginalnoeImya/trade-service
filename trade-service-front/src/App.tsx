@@ -13,32 +13,14 @@ import {RequestService} from "./utils/RequestService";
 import fileDownload from "js-file-download";
 import ShopActiveOrderForm from "./components/form/ShopActiveOrderForm";
 import StoreActiveOrderForm from "./components/form/StoreActiveOrderForm";
+import OrderSendForm from "./components/form/OrderSendForm";
 
 function App() {
-    const { keycloak } = useKeycloak();
-
-    const shopFormCheckButtonClicked = (selectedProducts: Product[]) => {
-        const fileDownload = require('js-file-download');
-
-        RequestService.getCheck(selectedProducts, keycloak.token)
-            .then((response) => {
-                if (response !== undefined)
-                    fileDownload(response.data, "Товарный чек.docx");
-            });
-    }
-
-    const shopFormOrderButtonClicked = (selectedProducts: Product[]) => {
-    }
-
     return (
         <div className="App">
             <BrowserRouter>
                 <Sidebar/>
                 <Routes>
-                    <Route
-                        path="/shop/order/active"
-                        element={<ShopActiveOrderForm key="ShopForm0" />}
-                    />
                     <Route
                         path="/shop/product/acceptance"
                         element={
@@ -51,25 +33,13 @@ function App() {
                     <Route
                         path="/shop/product/sale"
                         element={
-                            <ShopProductSaleForm
-                                key="ShopForm2"
-                                addButtonName="Добавить товар в чек"
-                                formButtonName="Сформировать чек"
-                                containsLabelName="Содержимое чека:"
-                                formButtonAction={shopFormCheckButtonClicked}
-                            />
+                            <ShopProductSaleForm key="ShopForm2" />
                         }
                     />
                     <Route
                         path="/shop/product/order"
                         element={
-                            <ShopProductSaleForm
-                                key="ShopForm3"
-                                addButtonName="Добавить товар в заказ"
-                                formButtonName="Отправить заказ на склад"
-                                containsLabelName="Содержимое заказа:"
-                                formButtonAction={shopFormCheckButtonClicked}
-                            />
+                            <ShopProductSaleForm key="ShopForm3" />
                         }
                     />
                     <Route
@@ -96,13 +66,7 @@ function App() {
                     <Route
                         path="/storage/product/release"
                         element={
-                            <ShopProductSaleForm
-                                key="StoreForm3"
-                                addButtonName="Добавить товар"
-                                formButtonName="Сформировать накладную"
-                                containsLabelName="Содержимое накладной:"
-                                formButtonAction={shopFormCheckButtonClicked}
-                            />
+                            <OrderSendForm key="StoreForm3" />
                         }
                     />
                     <Route

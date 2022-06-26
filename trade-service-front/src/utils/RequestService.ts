@@ -71,6 +71,24 @@ export class RequestService {
         }
     }
 
+    public static async getInvoice(products: Product[], authToken: string | undefined) {
+        try {
+            return await axios.post("http://localhost:8080/api/storekeeper/invoice/create",
+                JSON.stringify(products),
+                {
+                    headers: {
+                        "Authorization": "Bearer " + authToken,
+                        "content-type": "application/json",
+                    },
+                    responseType: 'blob'
+                }
+            );
+        }
+        catch (e) {
+            console.warn("Ошибка при получении накладной с сервера")
+        }
+    }
+
     public static async getShopAddresses(authToken: string | undefined) {
         try {
             return await axios.get("http://localhost:8080/api/storeworker/shop/addresses",
@@ -79,6 +97,103 @@ export class RequestService {
                         "Authorization": "Bearer " + authToken,
                         "content-type": "application/json",
                     },
+                }
+            );
+        }
+        catch (e) {
+            console.warn("Ошибка при получении адресов магазинов с сервера")
+        }
+    }
+
+    public static async getShopProducts(shopAddress: string, authToken: string | undefined) {
+        try {
+            return await axios.get("http://localhost:8080/api/storeworker/shop/products?address="
+                + shopAddress.replace(" ", "+"),
+                {
+                    headers: {
+                        "Authorization": "Bearer " + authToken,
+                        "content-type": "application/json",
+                    }
+                }
+            );
+        }
+        catch (e) {
+            console.warn("Ошибка при получении товаров магазина с сервера")
+        }
+    }
+
+    public static async getProductCitiesFromShop(shopAddress: string, productName: string, authToken: string | undefined) {
+        try {
+            return await axios.get("http://localhost:8080/api/storeworker/shop/city?address="
+                + shopAddress.replace(" ", "+") + "&name=" +
+                productName.replace(" ", "+"),
+                {
+                    headers: {
+                        "Authorization": "Bearer " + authToken,
+                        "content-type": "application/json",
+                    }
+                }
+            );
+        }
+        catch (e) {
+            console.warn("Ошибка при получении адресов магазинов с сервера")
+        }
+    }
+
+    public static async getProductPricesFromShop(shopAddress: string, productName: string,
+                                                 productCity: string, authToken: string | undefined) {
+        try {
+            return await axios.get("http://localhost:8080/api/storeworker/shop/price?address="
+                + shopAddress.replace(" ", "+") + "&name=" +
+                productName.replace(" ", "+") + "&city=" +
+                productCity.replace(" ", "+"),
+                {
+                    headers: {
+                        "Authorization": "Bearer " + authToken,
+                        "content-type": "application/json",
+                    }
+                }
+            );
+        }
+        catch (e) {
+            console.warn("Ошибка при получении адресов магазинов с сервера")
+        }
+    }
+
+    public static async getProductQuantityFromShop(shopAddress: string, productName: string,
+                                                    productCity: string, productPrice: string,
+                                                    authToken: string | undefined) {
+        try {
+            return await axios.get("http://localhost:8080/api/storeworker/shop/quantity?address="
+                + shopAddress.replace(" ", "+") + "&name=" +
+                productName.replace(" ", "+") + "&city=" +
+                productCity.replace(" ", "+") + "&price=" + productPrice
+                ,
+                {
+                    headers: {
+                        "Authorization": "Bearer " + authToken,
+                        "content-type": "application/json",
+                    }
+                }
+            );
+        }
+        catch (e) {
+            console.warn("Ошибка при получении адресов магазинов с сервера")
+        }
+    }
+
+    public static async getProductQuantityFromStorage(productName: string, productCity: string, productPrice: string,
+                                                   authToken: string | undefined) {
+        try {
+            return await axios.get("http://localhost:8080/api/storekeeper/storage/quantity?name="
+                + productName.replace(" ", "+") + "&city=" +
+                productCity.replace(" ", "+") + "&price=" + productPrice
+                ,
+                {
+                    headers: {
+                        "Authorization": "Bearer " + authToken,
+                        "content-type": "application/json",
+                    }
                 }
             );
         }
@@ -103,7 +218,7 @@ export class RequestService {
         }
     }
 
-    public static async getProductCities(productName: string, authToken: string | undefined) {
+    public static async getProductCitiesFromStorage(productName: string, authToken: string | undefined) {
         try {
             return await axios.get("http://localhost:8080/api/storekeeper/storage/city/" + productName,
                 {
@@ -119,7 +234,8 @@ export class RequestService {
         }
     }
 
-    public static async getProductPrices(productName: string, productCity: string, authToken: string | undefined) {
+    public static async getProductPricesFromStorage(productName: string, productCity: string,
+                                                    authToken: string | undefined) {
         try {
             return await axios.get("http://localhost:8080/api/storekeeper/storage/price?name=" + productName +
                 "&city=" + productCity,
@@ -132,7 +248,7 @@ export class RequestService {
             );
         }
         catch (e) {
-            console.warn("Ошибка при получении городов товара с сервера")
+            console.warn("Ошибка при получении цены товара с сервера")
         }
     }
 

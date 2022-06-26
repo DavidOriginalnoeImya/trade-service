@@ -2,6 +2,7 @@ package ru.home.util;
 
 import org.apache.poi.xwpf.usermodel.*;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
+import ru.home.model.CheckProduct;
 import ru.home.model.Product;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -39,7 +40,32 @@ public class DocumentCreator {
         monthNamesByNumber.put("12", "   декабря    ");
     }
 
-    public byte[] writeCheck(List<Product> products) {
+    public byte[] writeInvoice(List<Product> products) {
+        try (XWPFDocument document = new XWPFDocument()) {
+            addFormerParagraph(document, "Иванов Д.А.");
+            addFormDateParagraph(document);
+            document.createParagraph();
+            addTitleParagraph(document, "Товарная накладная");
+            addTitleParagraph(document, "на поставку товара в магазин");
+            document.createParagraph();
+            addTable(
+                    document,
+                    List.of("№", "Наименование товара", "Город производства", "Цена, руб", "Количество, шт"),
+                    convertProductsToInvoiceTable(products)
+            );
+
+            document.write(new FileOutputStream(productCheckName));
+
+            return Files.readAllBytes(java.nio.file.Path.of(productCheckName));
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return "Check creation error".getBytes(StandardCharsets.UTF_8);
+    }
+
+    public byte[] writeCheck(List<CheckProduct> products) {
         try (XWPFDocument document = new XWPFDocument()) {
             addFormerParagraph(document, "Иванов Д.А.");
             addFormDateParagraph(document);
@@ -176,17 +202,17 @@ public class DocumentCreator {
         cell.setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
     }
 
-    private List<List<String>> convertProductsToCertTable(List<Product> products) {
+    private List<List<String>> convertProductsToCertTable(List<CheckProduct> products) {
         List<List<String>> productTable = new ArrayList<>();
 
-        for (Product product: products) {
-//            productTable.add(List.of(
-//                    product.getName(),
-//                    "1",
-//                    String.valueOf(product.getQuantity()),
-//                    "10",
-//                    String.valueOf(10 * product.getQuantity())
-//            ));
+        for (CheckProduct product: products) {
+            productTable.add(List.of(
+                    product.getName(),
+                    product.getCode(),
+                    product.getQuantity(),
+                    product.getPrice(),
+                    product.getSum()
+            ));
         }
 
         return productTable;
@@ -197,6 +223,21 @@ public class DocumentCreator {
 
         for (Product product: products) {
             productTable.add(List.of(product.getName(), product.getId(), product.getQuantity()));
+        }
+
+        return productTable;
+    }
+
+    private List<List<String>> convertProductsToInvoiceTable(List<Product> products) {
+        List<List<String>> productTable = new ArrayList<>();
+
+        for (Product product: products) {
+            productTable.add(List.of(
+                    product.getName(),
+                    product.getCity(),
+                    String.valueOf(product.getPrice()),
+                    product.getQuantity()
+            ));
         }
 
         return productTable;

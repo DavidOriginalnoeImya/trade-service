@@ -18,16 +18,13 @@ export type Product = {
 
 const ProductSaleForm = () => {
     const [productName, setProductName] = useState("");
-    const [productCity, setProductCity] = useState("");
     const [productPrice, setProductPrice] = useState("");
-    const [productQuantity, setProductQuantity] = useState(0);
-    const [selectedProducts, setSelectedProducts] = useState([] as Product[]);
-    const [shopAddress, setShopAddress] = useState("");
+    const [productCity, setProductCity] = useState("");
+    const [productQuantity, setProductQuantity] = useState("");
     const [selectedProductQuantity, setSelectedProductQuantity] = useState(0);
 
-
-    const [shopAddresses, setShopAddresses] = useState([] as string[]);
-    const [shopProducts, setShopProducts] = useState([] as string[]);
+    const [selectedProducts, setSelectedProducts] = useState([] as Product[]);
+    const [storageProducts, setStorageProducts] = useState([] as string[]);
     const [productCities, setProductCities] = useState([] as string[]);
     const [productPrices, setProductPrices] = useState([] as number[]);
 
@@ -40,30 +37,18 @@ const ProductSaleForm = () => {
     const { keycloak } = useKeycloak();
 
     useEffect(() => {
-        RequestService.getShopAddresses(keycloak.token)
+        RequestService.getStorageProducts(keycloak.token)
             .then((response) => {
                 if (response !== undefined && Array.isArray(response.data)) {
-                    setShopAddresses(response.data);
-                    setShopAddress(response.data.length > 0 ? response.data[0] : "");
+                    setStorageProducts(response.data);
+                    setProductName(response.data.length > 0 ? response.data[0] : "");
                 }
             })
     }, [keycloak.token]);
 
     useEffect(() => {
-        if (shopAddress) {
-            RequestService.getShopProducts(shopAddress, keycloak.token)
-                .then((response) => {
-                    if (response !== undefined && Array.isArray(response.data)) {
-                        setShopProducts(response.data);
-                        setProductName(response.data.length > 0 ? response.data[0] : "");
-                    }
-                })
-        }
-    }, [shopAddress]);
-
-    useEffect(() => {
-        if (shopAddress && productName) {
-            RequestService.getProductCitiesFromShop(shopAddress, productName, keycloak.token)
+        if (productName) {
+            RequestService.getProductCitiesFromStorage(productName, keycloak.token)
                 .then((response) => {
                     if (response !== undefined && Array.isArray(response.data)) {
                         setProductCities(response.data);
@@ -71,11 +56,11 @@ const ProductSaleForm = () => {
                     }
                 })
         }
-    }, [shopAddress, productName])
+    }, [productName])
 
     useEffect(() => {
-        if (shopAddress && productName && productCity) {
-            RequestService.getProductPricesFromShop(shopAddress, productName, productCity, keycloak.token)
+        if (productName && productCity) {
+            RequestService.getProductPricesFromStorage(productName, productCity, keycloak.token)
                 .then((response) => {
                     if (response !== undefined && Array.isArray(response.data)) {
                         setProductPrices(response.data);
@@ -83,29 +68,29 @@ const ProductSaleForm = () => {
                     }
                 })
         }
-    }, [shopAddress, productName, productCity])
+    }, [productName, productCity])
 
     useEffect(() => {
-        if (shopAddress && productName && productCity && productPrice) {
-            RequestService.getProductQuantityFromShop(shopAddress, productName, productCity, productPrice, keycloak.token)
+        if (productName && productCity && productPrice) {
+            RequestService.getProductQuantityFromStorage(productName, productCity, productPrice, keycloak.token)
                 .then((response) => {
                     if (response !== undefined) {
                         setProductQuantity(response.data);
                     }
                 })
         }
-    }, [shopAddress, productName, productCity, productPrice])
+    }, [productName, productCity, productPrice])
 
-    const formCheckButtonClicked = (event: React.MouseEvent<HTMLElement>) => {
+    const formInvoiceButtonClicked = (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault();
 
         const fileDownload = require('js-file-download');
 
         if (selectedProducts.length > 0) {
-            RequestService.getCheck(selectedProducts, keycloak.token)
+            RequestService.getInvoice(selectedProducts, keycloak.token)
                 .then((response) => {
                     if (response !== undefined)
-                        fileDownload(response.data, "Товарный чек.docx");
+                        fileDownload(response.data, "Накладная.docx");
                 });
         }
         else {
@@ -134,18 +119,9 @@ const ProductSaleForm = () => {
                 <Form>
                     <Form.Group>
                         <Col className="form-input">
-                            <Form.Label> {"Адрес магазина"} </Form.Label>
-                            <Form.Select
-                                value={shopAddress}
-                                onChange={event => setShopAddress(event.target.value)}
-                            >
-                                { createOptionList(shopAddresses) }
-                            </Form.Select>
-                        </Col>
-                        <Col className="form-input">
                             <Form.Label> {"Название товара"} </Form.Label>
                             <Form.Select value={productName} onChange={(e) => setProductName(e.target.value)}>
-                                { createOptionList(shopProducts) }
+                                { createOptionList(storageProducts) }
                             </Form.Select>
                         </Col>
                         <Col className="form-input">
@@ -179,15 +155,15 @@ const ProductSaleForm = () => {
                             className="mt-4"
                             onClick={addButtonCLicked}
                             type="submit"
-                            value={"Добавить товар в чек"}/>
+                            value={"Добавить товар в заказ"}/>
                     </Col>
                     <Col style={{marginTop: "25px"}}>
-                        <Form.Label style={{marginTop: "7px"}}> {"Содержимое чека:"} </Form.Label>
+                        <Form.Label style={{marginTop: "7px"}}> {"Содержимое заказа:"} </Form.Label>
                         <Form.Control
                             className="create-check-button"
-                            onClick={formCheckButtonClicked}
+                            onClick={formInvoiceButtonClicked}
                             type="submit"
-                            value={"Сформировать чек"}/>
+                            value={"Сформировать накладную"}/>
                     </Col>
                     <Col className="product-table">
                         <ProductTable

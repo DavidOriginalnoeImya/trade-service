@@ -56,4 +56,46 @@ public class ShopWorkerREST {
                 .ok(shopWorkerController.getShopAddresses())
                 .build();
     }
+
+    @GET
+    @Path("/shop/products")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getShopProducts(@QueryParam("address") String shopAddress) {
+        return Response
+                .ok(shopWorkerController.getProductsFromShop(shopAddress))
+                .build();
+    }
+
+    @GET
+    @Path("/shop/city")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getShopProducts(@QueryParam("address") String shopAddress,
+                                    @QueryParam("name") String productName) {
+        return Response
+                .ok(shopWorkerController.getProductCitiesFromShop(shopAddress, productName))
+                .build();
+    }
+
+    @GET
+    @Path("/shop/price")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getShopProducts(@QueryParam("address") String shopAddress,
+                                    @QueryParam("name") String productName,
+                                    @QueryParam("city") String productCity) {
+        return Response
+                .ok(shopWorkerController.getProductPricesFromShop(shopAddress, productName, productCity))
+                .build();
+    }
+
+    @GET
+    @Path("/shop/quantity")
+    @Produces(MediaType.TEXT_PLAIN)
+    public Response getShopProducts(@QueryParam("address") String shopAddress,
+                                    @QueryParam("name") String productName,
+                                    @QueryParam("city") String productCity,
+                                    @QueryParam("price") String productPrice) {
+        return Response
+                .ok(shopWorkerController.getProductQuantityFromShop(shopAddress, productName, productCity, productPrice))
+                .build();
+    }
 }

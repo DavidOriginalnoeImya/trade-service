@@ -38,7 +38,7 @@
 
 .product-table {
     overflow-y: auto;
-    max-height: 220px;
+    max-height: 150px;
     margin-top: 25px;
     margin-right: 20px;
 }
@@ -52,7 +52,7 @@
 }
 
 .table-column {
-    max-width: 200px;
-    width: 200px;
+    max-width: 150px;
+    width: 150px;
     text-align: center
 }

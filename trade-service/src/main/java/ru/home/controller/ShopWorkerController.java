@@ -9,6 +9,7 @@ import org.jboss.logging.Logger;
 import ru.home.dto.ProductNamesDTO;
 import ru.home.dto.ShopAvailableCertificateDTO;
 import ru.home.dto.ShopProductAcceptDTO;
+import ru.home.model.CheckProduct;
 import ru.home.model.Product;
 import ru.home.util.DocumentCreator;
 
@@ -71,7 +72,19 @@ public class ShopWorkerController {
     }
 
     public byte[] createCheck(List<Product> products) {
-        return documentCreator.writeCheck(products);
+        List<CheckProduct> checkProducts = new ArrayList<>();
+
+        for (Product product: products) {
+            checkProducts.add(new CheckProduct()
+                    .setName(product.getName())
+                    .setPrice(String.valueOf(product.getPrice()))
+                    .setQuantity(product.getQuantity())
+                    .setSum(String.valueOf(product.getPrice() * Integer.parseInt(product.getQuantity())))
+                    .setCode(String.valueOf(dbController.getProductId(product))));
+        }
+
+
+        return documentCreator.writeCheck(checkProducts);
     }
 
     public void addProduct(Product product, String shopAddress) {
@@ -111,5 +124,50 @@ public class ShopWorkerController {
         return addresses;
     }
 
+    public List<String> getProductsFromShop(String shopAddress) {
+        List<String> products = new ArrayList<>();
 
+        RowSet<Row> rows = dbController.getProductsFromShop(shopAddress);
+
+        for (Row row: rows) {
+            products.add(row.getString("name"));
+        }
+
+        return products;
+    }
+
+    public List<String> getProductCitiesFromShop(String shopAddress, String productName) {
+        List<String> products = new ArrayList<>();
+
+        RowSet<Row> rows = dbController.getProductCitiesFromShop(shopAddress, productName);
+
+        for (Row row: rows) {
+            products.add(row.getString("city"));
+        }
+
+        return products;
+    }
+
+    public List<Float> getProductPricesFromShop(String shopAddress, String productName, String productCity) {
+        List<Float> prices = new ArrayList<>();
+
+        RowSet<Row> rows = dbController.getProductPricesFromShop(shopAddress, productName, productCity);
+
+        for (Row row: rows) {
+            prices.add(row.getFloat("price"));
+        }
+
+        return prices;
+    }
+
+    public int getProductQuantityFromShop(String shopAddress, String productName,
+                                          String productCity, String productPrice) {
+        RowSet<Row> rows = dbController.getProductQuantityFromShop(shopAddress, productName, productCity, productPrice);
+
+        if (rows.rowCount() > 0) {
+            return rows.iterator().next().getInteger("productquantity");
+        }
+
+        return 0;
+    }
 }

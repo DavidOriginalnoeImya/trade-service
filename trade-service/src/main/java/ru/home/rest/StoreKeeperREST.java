@@ -5,11 +5,13 @@ import ru.home.controller.StoreKeeperController;
 import ru.home.dto.DTOConverter;
 import ru.home.dto.ProductNamesDTO;
 import ru.home.dto.StorageProductAcceptDTO;
+import ru.home.model.Product;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.List;
 
 @Path("/api/storekeeper")
 public class StoreKeeperREST {
@@ -32,6 +34,17 @@ public class StoreKeeperREST {
         return Response
                 .ok(storeKeeperController.createAvailableCertificate(productNames))
                 .header("Content-Disposition", "attachment; filename=\"Справка.docx\"")
+                .build();
+    }
+
+    @POST
+    @Path("/invoice/create")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    public Response createCheck(List<Product> products) {
+        return Response
+                .ok(storeKeeperController.createInvoice(products))
+                .header("Content-Disposition", "attachment; filename=\"Накладная.docx\"")
                 .build();
     }
 
@@ -60,6 +73,17 @@ public class StoreKeeperREST {
                                      @QueryParam("city") String productCity) {
         return Response
                 .ok(storeKeeperController.getProductPrices(productName, productCity))
+                .build();
+    }
+
+    @GET
+    @Path("/storage/quantity")
+    @Produces(MediaType.TEXT_PLAIN)
+    public Response getShopProducts(@QueryParam("name") String productName,
+                                    @QueryParam("city") String productCity,
+                                    @QueryParam("price") String productPrice) {
+        return Response
+                .ok(storeKeeperController.getProductQuantityFromStorage(productName, productCity, productPrice))
                 .build();
     }
 }

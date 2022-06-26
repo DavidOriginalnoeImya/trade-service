@@ -9,6 +9,7 @@ import ru.home.model.Product;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import java.util.List;
 
 @ApplicationScoped
 public class DbController {
@@ -90,12 +91,16 @@ public class DbController {
     }
 
     public RowSet<Row> getProductCities(String productName) {
-        return client.preparedQuery("SELECT city FROM product WHERE name = $1")
+        return client.preparedQuery("SELECT product.city FROM product, storage " +
+                        "WHERE product.productid = storage.productid AND product.name = $1 " +
+                        "GROUP BY product.city")
                 .execute(Tuple.of(productName)).await().indefinitely();
     }
 
     public RowSet<Row> getProductPrices(String productName, String productCity) {
-        return client.preparedQuery("SELECT price FROM product WHERE name = $1 AND city = $2")
+        return client.preparedQuery("SELECT product.price FROM product, storage " +
+                        "WHERE product.productid = storage.productid AND product.name = $1 AND product.city = $2 " +
+                        "GROUP BY product.price")
                 .execute(Tuple.of(productName, productCity)).await().indefinitely();
     }
 
@@ -111,9 +116,60 @@ public class DbController {
     }
 
     public RowSet<Row> getProductsQuantityFromShops(String productName, String shopAddress) {
-        return client.preparedQuery("SELECT productid, SUM(productquantity) AS sum FROM Availability " +
+        return client.preparedQuery("SELECT productid, productquantity AS sum FROM Availability " +
                 "WHERE productid IN (SELECT productid FROM product WHERE name = $1) " +
-                "AND shopid = (SELECT shopid FROM Shop WHERE address = $2)" +
-                "GROUP BY productid").execute(Tuple.of(productName, shopAddress)).await().indefinitely();
+                "AND shopid = (SELECT shopid FROM Shop WHERE address = $2)")
+                .execute(Tuple.of(productName, shopAddress)).await().indefinitely();
+    }
+
+    public RowSet<Row> getProductsFromShop(String shopAddress) {
+        return client.preparedQuery("SELECT name FROM product WHERE productid IN " +
+                        "(SELECT productid FROM Availability  WHERE shopid = " +
+                        "(SELECT shopid FROM Shop WHERE address = $1)) " +
+                        "GROUP BY name")
+                .execute(Tuple.of(shopAddress)).await().indefinitely();
+    }
+
+    public RowSet<Row> getProductCitiesFromShop(String shopAddress, String productName) {
+        return client.preparedQuery("SELECT city FROM product WHERE productid IN " +
+                        "(SELECT productid FROM Availability  WHERE shopid = " +
+                        "(SELECT shopid FROM Shop WHERE address = $1)) AND name = $2 " +
+                        "GROUP BY city")
+                .execute(Tuple.of(shopAddress, productName)).await().indefinitely();
+    }
+
+    public RowSet<Row> getProductPricesFromShop(String shopAddress, String productName, String city) {
+        return client.preparedQuery("SELECT price FROM product WHERE productid IN " +
+                        "(SELECT productid FROM Availability  WHERE shopid = " +
+                        "(SELECT shopid FROM Shop WHERE address = $1)) AND name = $2 AND city = $3")
+                .execute(Tuple.of(shopAddress, productName, city)).await().indefinitely();
+    }
+
+    public RowSet<Row> getProductQuantityFromShop(String shopAddress, String productName, String city, String price) {
+        return client.preparedQuery("SELECT productquantity FROM availability " +
+                        "WHERE productid = (SELECT productid FROM product " +
+                        "WHERE name = $1 AND city = $2 AND ABS(price - $3) <= 0.01) " +
+                        "AND shopid = (SELECT shopid FROM shop WHERE address = $4)")
+                .execute(Tuple.of(productName, city, Float.parseFloat(price), shopAddress)).await().indefinitely();
+    }
+
+    public RowSet<Row> getProductQuantityFromStorage(String productName, String city, String price) {
+        return client.preparedQuery("SELECT SUM(productquantity) AS sum FROM storage " +
+                        "WHERE productid = (SELECT productid FROM product " +
+                        "WHERE name = $1 AND city = $2 AND ABS(price - $3) <= 0.01) " +
+                        "GROUP BY productid")
+                .execute(Tuple.of(productName, city, Float.parseFloat(price))).await().indefinitely();
+    }
+
+    public void updateStorageSlots(List<Product> products) {
+        for (Product product: products) {
+            client.preparedQuery("UPDATE storage SET productquantity = productquantity - $1 " +
+                    "WHERE slotid = (SELECT slotid FROM storage WHERE productid = " +
+                    "(SELECT productid from product WHERE name = $2 AND city = $3 " +
+                    "AND ABS(price - $4) <= 0.01) AND productquantity - $5 >= 0 LIMIT 1)")
+                    .execute(Tuple.of(Integer.parseInt(product.getQuantity()), product.getName(),
+                            product.getCity(), product.getPrice(), Integer.parseInt(product.getQuantity())))
+                    .await().indefinitely();
+        }
     }
 }

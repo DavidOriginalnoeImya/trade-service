@@ -41,23 +41,27 @@ const ProductAcceptForm: FC<IProductAcceptForm> = ({ role }) => {
     }, [keycloak.token]);
 
     useEffect(() => {
-        RequestService.getProductCities(productName, keycloak.token)
-            .then((response) => {
-                if (response !== undefined && Array.isArray(response.data)) {
-                    setProductCities(response.data);
-                    setProductCity(response.data.length > 0 ? response.data[0] : "");
-                }
-            })
+        if (productName) {
+            RequestService.getProductCitiesFromStorage(productName, keycloak.token)
+                .then((response) => {
+                    if (response !== undefined && Array.isArray(response.data)) {
+                        setProductCities(response.data);
+                        setProductCity(response.data.length > 0 ? response.data[0] : "");
+                    }
+                })
+        }
     }, [productName])
 
     useEffect(() => {
-        RequestService.getProductPrices(productName, productCity, keycloak.token)
-            .then((response) => {
-                if (response !== undefined && Array.isArray(response.data)) {
-                    setProductPrices(response.data);
-                    setProductPrice(response.data.length > 0 ? response.data[0] : "");
-                }
-            })
+        if (productName && productCity) {
+            RequestService.getProductPricesFromStorage(productName, productCity, keycloak.token)
+                .then((response) => {
+                    if (response !== undefined && Array.isArray(response.data)) {
+                        setProductPrices(response.data);
+                        setProductPrice(response.data.length > 0 ? response.data[0] : "");
+                    }
+                })
+        }
     }, [productName, productCity])
 
     const createOptionList = (items: string[] | number[]) => {
