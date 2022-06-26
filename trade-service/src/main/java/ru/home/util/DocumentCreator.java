@@ -63,13 +63,13 @@ public class DocumentCreator {
         return "Check creation error".getBytes(StandardCharsets.UTF_8);
     }
 
-    public byte[] writeCertificate(List<Product> products) {
+    public byte[] writeCertificate(List<Product> products, String certificateTitle, String formerName) {
         try (XWPFDocument document = new XWPFDocument()) {
-            addFormerParagraph(document, "Иванов Д.А.");
+            addFormerParagraph(document, formerName);
             addFormDateParagraph(document);
             document.createParagraph();
             addTitleParagraph(document, "Справка");
-            addTitleParagraph(document, "о наличии товара во всех магазинах сети");
+            addTitleParagraph(document, certificateTitle);
             document.createParagraph();
             addTable(
                     document,
@@ -196,10 +196,7 @@ public class DocumentCreator {
         List<List<String>> productTable = new ArrayList<>();
 
         for (Product product: products) {
-            productTable.add(List.of(
-                    product.getName(),
-                    "1", "10"
-            ));
+            productTable.add(List.of(product.getName(), product.getId(), product.getQuantity()));
         }
 
         return productTable;

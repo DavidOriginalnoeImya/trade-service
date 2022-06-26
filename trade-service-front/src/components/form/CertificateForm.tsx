@@ -1,21 +1,32 @@
-import React, {FC, useState} from 'react';
+import React, {FC, useEffect, useState} from 'react';
 import {Button, Col, Container, Form, FormControl, InputGroup, ListGroup} from "react-bootstrap";
 import './Form.css';
 import {MdOutlineClose} from "react-icons/md";
 import {RequestService} from "../../utils/RequestService";
 import {useKeycloak} from "@react-keycloak/web";
 import List from "../List";
+import fileDownload from "js-file-download";
 
 interface ICertificateForm {
-    shopsCheckBox: boolean;
+    role: "storeworker" | "storekeeper";
 }
 
-const CertificateForm: FC<ICertificateForm> = ({shopsCheckBox}) => {
+const CertificateForm: FC<ICertificateForm> = ({role}) => {
     const [productName, setProductName] = useState("");
     const [selectedProducts, setSelectedProducts] = useState([] as string[]);
-    const [checkAllShops, setCheckAllShops] = useState(false);
+    const [selectedShopAddress, setSelectedShopAddress] = useState("Все магазины")
+    const [shopAddresses, setShopAddresses] = useState(["Все магазины"] as string[]);
 
     const { keycloak } = useKeycloak();
+
+    useEffect(() => {
+        RequestService.getShopAddresses(keycloak.token)
+            .then((response) => {
+                if (response !== undefined && Array.isArray(response.data)) {
+                    setShopAddresses([...shopAddresses, ...response.data]);
+                }
+            })
+    }, [keycloak.token]);
 
     const addButtonClicked = (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault();
@@ -33,13 +44,13 @@ const CertificateForm: FC<ICertificateForm> = ({shopsCheckBox}) => {
         setSelectedProducts(selectedProducts.filter(name => productName !== name))
     }
 
-    const createCertificateClicked = (event: React.MouseEvent<HTMLElement>) => {
+    const createStorageCertificateClicked = (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault();
 
         if (selectedProducts.length > 0) {
             const fileDownload = require('js-file-download');
 
-            RequestService.getAvailableCertificate(selectedProducts, keycloak.token)
+            RequestService.getStorageAvailableCertificate(selectedProducts, keycloak.token)
                 .then((response) => {
                     if (response !== undefined)
                         fileDownload(response.data, "Справка.docx");
@@ -50,8 +61,27 @@ const CertificateForm: FC<ICertificateForm> = ({shopsCheckBox}) => {
         }
     }
 
-    const allShopCheckboxClicked = () => {
-        setCheckAllShops(!checkAllShops);
+    const createShopCertificateClicked = (event: React.MouseEvent<HTMLElement>) => {
+        event.preventDefault();
+
+        if (selectedProducts.length > 0) {
+            const fileDownload = require('js-file-download');
+
+            RequestService.getShopAvailableCertificate(selectedProducts, selectedShopAddress, keycloak.token)
+                .then((response) => {
+                    if (response !== undefined)
+                        fileDownload(response.data, "Справка.docx");
+                });
+        }
+        else {
+            alert("Список запрашиваемых товаров пуст")
+        }
+    }
+
+    const createOptionList = (items: string[] | number[]) => {
+        return items.map((item, index) => (
+            <option key={index}> { item } </option>
+        ))
     }
 
     return (
@@ -74,20 +104,24 @@ const CertificateForm: FC<ICertificateForm> = ({shopsCheckBox}) => {
                             />
                         </div>
 
-                        {shopsCheckBox &&
-                            <Form.Check
-                                style={{marginTop: "20px"}}
-                                type="checkbox"
-                                label="Проверять наличие во всех магазинах сети"
-                                onClick={allShopCheckboxClicked}
-                            />
+                        { (role === "storeworker") &&
+                            <Col className="form-input">
+                                <Form.Label> {"Адрес магазина"} </Form.Label>
+                                <Form.Select
+                                    value={selectedShopAddress}
+                                    onChange={event => setSelectedShopAddress(event.target.value)}
+                                >
+                                    { createOptionList(shopAddresses) }
+                                </Form.Select>
+                            </Col>
                         }
 
                         <Form.Control
                             className="mt-4 form-input"
                             type="submit"
                             value="Сформировать справку"
-                            onClick={createCertificateClicked}
+                            onClick={role === "storekeeper" ?
+                                createStorageCertificateClicked : createShopCertificateClicked}
                         />
                         <br/>
                         {(selectedProducts.length > 0 ?

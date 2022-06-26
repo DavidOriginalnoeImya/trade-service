@@ -4,75 +4,101 @@ import io.vertx.mutiny.pgclient.PgPool;
 import io.vertx.mutiny.sqlclient.Row;
 import io.vertx.mutiny.sqlclient.RowSet;
 import io.vertx.mutiny.sqlclient.Tuple;
+import org.eclipse.microprofile.jwt.JsonWebToken;
+import org.jboss.logging.Logger;
+import ru.home.dto.ProductNamesDTO;
 import ru.home.model.Product;
+import ru.home.util.DocumentCreator;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import java.util.logging.Logger;
+import java.util.ArrayList;
+import java.util.List;
 
 @ApplicationScoped
 public class StoreKeeperController {
     private static final Logger LOGGER = Logger.getLogger(StoreKeeperController.class.getSimpleName());
 
     @Inject
-    PgPool client;
+    JsonWebToken jwt;
 
-    public void addProduct(Product product, int productQuantity) {
-        int productId = getProductId(product);
+    @Inject
+    DocumentCreator documentCreator;
 
-        if (productId != -1) {
-            int slotId = getAdmSlotId(productId, productQuantity);
+    @Inject
+    DbController dbController;
 
-            if (slotId != -1) {
-                client.preparedQuery("UPDATE Storage SET productquantity = $1 + productquantity WHERE slotid = $2")
-                        .execute(Tuple.of(productQuantity, slotId))
-                        .await().indefinitely();
+    public byte[] createAvailableCertificate(ProductNamesDTO productNames) {
+        List<Product> products = new ArrayList<>();
+
+        for (String productName: productNames.getProducts()) {
+            RowSet<Row> rows = dbController.getProductsQuantityFromStorage(productName);
+
+            if (rows.rowCount() > 0) {
+                for (Row row : rows) {
+                    products.add(new Product()
+                            .setId(String.valueOf(row.getInteger("productid")))
+                            .setName(productName)
+                            .setQuantity(String.valueOf(row.getInteger("sum"))
+                            ));
+                }
             }
             else {
-                addNewSlot(productId, productQuantity);
+                products.add(new Product().setId("-").setName(productName).setQuantity("-"));
             }
         }
-        else {
-            addNewProduct(product);
-            addNewSlot(getProductId(product), productQuantity);
+
+        return documentCreator.writeCertificate(products,"о наличии товара на складе",
+                jwt != null ? jwt.getClaim("family_name") + " " + jwt.getClaim("given_name") : "");
+    }
+
+    public void addProduct(Product product) {
+        int productId = dbController.getProductId(product);
+
+        if (productId != -1) {
+            int slotId = dbController.getAdmSlotId(productId, Integer.parseInt(product.getQuantity()));
+
+            if (slotId != -1) {
+                dbController.updateSlotProductQuantity(slotId, Integer.parseInt(product.getQuantity()));
+            }
         }
     }
 
-    private int getProductId(Product product) {
-        RowSet<Row> rows = client.preparedQuery("SELECT productid FROM Product " +
-                "WHERE name = $1 AND city = $2 AND price = $3")
-                .execute(Tuple.of(product.getName(), product.getCity(), product.getPrice()))
-                .await().indefinitely();
 
-        if (rows.rowCount() > 0) {
-            return rows.iterator().next().getInteger("productid");
+    public List<String> getProductsFromStorage() {
+        List<String> products = new ArrayList<>();
+
+        RowSet<Row> rows = dbController.getProductsFromStorage();
+
+        for (Row row: rows) {
+            products.add(row.getString("name"));
         }
 
-        return -1;
+        return products;
     }
 
-    private int getAdmSlotId(int productId, int productQuantity) {
-        RowSet<Row> rows = client.preparedQuery("SELECT slotid FROM Storage " +
-                        "WHERE productid = $1 AND capacity - productQuantity >= $2")
-                .execute(Tuple.of(productId, productQuantity))
-                .await().indefinitely();
+    public List<String> getProductCities(String productName) {
+        List<String> products = new ArrayList<>();
 
-        if (rows.rowCount() > 0) {
-            return rows.iterator().next().getInteger("slotid");
+        RowSet<Row> rows = dbController.getProductCities(productName);
+
+        for (Row row: rows) {
+            products.add(row.getString("city"));
         }
 
-        return -1;
+        return products;
     }
 
-    private void addNewSlot(int productId, int productQuantity) {
-        client.preparedQuery("INSERT INTO Storage (capacity, productquantity, productid) " +
-                "VALUES ($1, $2, $3)").execute(Tuple.of(productQuantity, productQuantity, productId))
-                .await().indefinitely();
+    public List<Float> getProductPrices(String productName, String productCity) {
+        List<Float> products = new ArrayList<>();
+
+        RowSet<Row> rows = dbController.getProductPrices(productName, productCity);
+
+        for (Row row: rows) {
+            products.add(row.getFloat("price"));
+        }
+
+        return products;
     }
 
-    private void addNewProduct(Product product) {
-        client.preparedQuery("INSERT INTO Product (name, city, price) " +
-                "VALUES ($1, $2, $3)").execute(Tuple.of(product.getName(), product.getCity(), product.getPrice()))
-                .await().indefinitely();
-    }
 }

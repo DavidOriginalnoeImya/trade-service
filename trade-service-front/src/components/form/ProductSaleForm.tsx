@@ -21,7 +21,7 @@ interface IProductSaleForm {
     formButtonAction: (selectedProducts: Product[]) => void
 }
 
-const StoreProductAcceptForm: FC<IProductSaleForm> = ({
+const ProductSaleForm: FC<IProductSaleForm> = ({
                                                           addButtonName,
                                                           formButtonName,
                                                           containsLabelName,
@@ -150,4 +150,4 @@ const StoreProductAcceptForm: FC<IProductSaleForm> = ({
     );
 };
 
-export default StoreProductAcceptForm;
+export default ProductSaleForm;

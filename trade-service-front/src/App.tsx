@@ -41,7 +41,12 @@ function App() {
                     />
                     <Route
                         path="/shop/product/acceptance"
-                        element={<ProductAcceptForm key="ShopForm1" />}
+                        element={
+                            <ProductAcceptForm
+                                key="ShopForm1"
+                                role="storeworker"
+                            />
+                        }
                     />
                     <Route
                         path="/shop/product/sale"
@@ -69,7 +74,11 @@ function App() {
                     />
                     <Route
                         path="/shop/product/certificate"
-                        element={<CertificateForm key="ShopForm4" shopsCheckBox={ true }/>}
+                        element={
+                        <CertificateForm
+                            key="ShopForm4"
+                            role="storeworker"
+                        />}
                     />
                     <Route
                         path="/storage/order/active"
@@ -77,7 +86,12 @@ function App() {
                     />
                     <Route
                         path="/storage/product/acceptance"
-                        element={<ProductAcceptForm key="StoreForm2" />}
+                        element={
+                            <ProductAcceptForm
+                                key="StoreForm2"
+                                role="storekeeper"
+                            />
+                        }
                     />
                     <Route
                         path="/storage/product/release"
@@ -93,7 +107,11 @@ function App() {
                     />
                     <Route
                         path="/storage/product/certificate"
-                        element={<CertificateForm key="StoreForm4" shopsCheckBox={ false }/>}
+                        element={
+                        <CertificateForm
+                            key="StoreForm4"
+                            role="storekeeper"
+                        />}
                     />
                     <Route
                         path="/storage/order"
