@@ -43,10 +43,25 @@
     margin-right: 20px;
 }
 
+.order-product-table {
+    overflow-y: auto;
+    max-height: 500px;
+    margin-top: 25px;
+    margin-left: 20px;
+}
+
 .create-check-button {
     float: right;
     width: 250px;
     max-width: 250px;
+    margin-top: 0;
+    margin-right: 20px;
+}
+
+.close-order-button {
+    float: right;
+    width: 150px;
+    max-width: 150px;
     margin-top: 0;
     margin-right: 20px;
 }

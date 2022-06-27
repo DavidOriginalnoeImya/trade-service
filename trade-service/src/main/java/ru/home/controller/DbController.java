@@ -211,7 +211,52 @@ public class DbController {
     }
 
     public RowSet<Row> getActiveOrdersId() {
-        return client.preparedQuery("SELECT orderid FROM productorder WHERE status = $1")
+        return client.preparedQuery("SELECT orderid FROM productorder WHERE status = $1 ORDER BY orderid ASC")
                 .execute(Tuple.of(newOrderStatus)).await().indefinitely();
+    }
+
+    public RowSet<Row> getProductsForOrder(int orderId) {
+        return client.preparedQuery("SELECT productid FROM includes WHERE orderid = $1")
+                .execute(Tuple.of(orderId)).await().indefinitely();
+    }
+
+    public Row getProductById(int productId) {
+        RowSet<Row> rowSet =  client.preparedQuery("SELECT name, city, price FROM product WHERE productid = $1")
+                .execute(Tuple.of(productId)).await().indefinitely();
+
+        if (rowSet.rowCount() > 0) {
+            return rowSet.iterator().next();
+        }
+
+        return null;
+    }
+
+    public Row getProductQuantityForOrder(int productId, int orderId) {
+        RowSet<Row> rowSet =  client.preparedQuery("SELECT productQuantity FROM includes " +
+                        "WHERE productid = $1 AND orderid = $2")
+                .execute(Tuple.of(productId, orderId)).await().indefinitely();
+
+        if (rowSet.rowCount() > 0) {
+            return rowSet.iterator().next();
+        }
+
+        return null;
+    }
+
+    public String getOrderShopAddress(int orderId) {
+        RowSet<Row> rowSet =  client.preparedQuery("SELECT address FROM shop WHERE shopid = (" +
+                        "SELECT shopid FROM productorder WHERE orderid = $1)")
+                .execute(Tuple.of(orderId)).await().indefinitely();
+
+        if (rowSet.rowCount() > 0) {
+            return rowSet.iterator().next().getString("address");
+        }
+
+        return null;
+    }
+
+    public void closeOrder(int orderId) {
+        client.preparedQuery("UPDATE productorder SET status = 'closed' WHERE orderid = $1")
+                .execute(Tuple.of(orderId)).await().indefinitely();
     }
 }

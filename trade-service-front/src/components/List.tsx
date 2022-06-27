@@ -6,35 +6,26 @@ import {Link} from "react-router-dom";
 
 interface IList {
     items: string[];
-    variant: "waiting" | "transition";
+    setOrderId: (orderId: string) => void;
 }
 
-const List: FC<IList> = ({items, variant}) => {
+const List: FC<IList> = ({items, setOrderId}) => {
+    const onLinkClicked = (orderId: string) => {
+        setOrderId(orderId);
+    }
+
     return (
         <ListGroup style={{marginTop: "3%", marginLeft: "3%"}}>
             {
                 items.map((item, index) => (
                     <ListGroup.Item key={ index }>
-                        { item }
-
-                        {
-                            (variant === "waiting") &&
-                            <MdTimelapse
-                                title="Ожидается обработка на складе"
+                        { "Заказ № " + item }
+                        <Link to={"/storage/order"} onClick={() => onLinkClicked(item)}>
+                            <MdArrowRight
+                                title="Перейти"
                                 className="list-button"
                             />
-                        }
-
-                        {
-                            (variant === "transition") &&
-                            <Link to={"/storage/order"} >
-                                <MdArrowRight
-                                    title="Перейти"
-                                    className="list-button"
-                                />
-                            </Link>
-                        }
-
+                        </Link>
                     </ListGroup.Item>
                 ))
             }

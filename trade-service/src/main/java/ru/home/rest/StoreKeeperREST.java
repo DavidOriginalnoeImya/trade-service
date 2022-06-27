@@ -86,4 +86,37 @@ public class StoreKeeperREST {
                 .ok(storeKeeperController.getProductQuantityFromStorage(productName, productCity, productPrice))
                 .build();
     }
+
+    @GET
+    @Path("/order/active")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getActiveOrders() {
+        return Response
+                .ok(storeKeeperController.getActiveOrdersId())
+                .build();
+    }
+
+    @GET
+    @Path("/order/products")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getOrderProducts(@QueryParam("id") String orderId) {
+        return Response
+                .ok(storeKeeperController.getOrderProducts(Integer.parseInt(orderId)))
+                .build();
+    }
+
+    @GET
+    @Path("/order/shop")
+    @Produces(MediaType.TEXT_PLAIN)
+    public Response getOrderShopAddress(@QueryParam("id") String orderId) {
+        return Response
+                .ok(storeKeeperController.getOrderShopAddress(Integer.parseInt(orderId)))
+                .build();
+    }
+
+    @POST
+    @Path("/order/close")
+    public void createCheck(@QueryParam("id") String orderId) {
+        storeKeeperController.closeOrder(Integer.parseInt(orderId));
+    }
 }

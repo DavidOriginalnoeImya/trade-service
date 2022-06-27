@@ -1,17 +1,23 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import logo from './logo.svg';
 import './App.css';
 import Sidebar from "./components/sidebar/Sidebar";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import StoreOrderForm from "./components/form/StoreOrderForm";
+import StorageActiveOrderForm from "./components/form/StorageActiveOrderForm";
 import CertificateForm from "./components/form/CertificateForm";
 import ShopProductSaleForm, {Product} from "./components/form/ProductSaleForm";
 import ProductAcceptForm from "./components/form/ProductAcceptForm";
 import StoreActiveOrderForm from "./components/form/StoreActiveOrderForm";
-import OrderSendForm from "./components/form/StorageOrderForm";
+import OrderSendForm from "./components/form/StorageCreateOrderForm";
 import ShopOrderForm from "./components/form/ShopOrderForm";
 
 function App() {
+    const [orderId, setOrderId] = useState("");
+
+    useEffect(() => {
+        console.log(orderId)
+    }, [orderId])
+
     return (
         <div className="App">
             <BrowserRouter>
@@ -48,7 +54,7 @@ function App() {
                     />
                     <Route
                         path="/storage/order/active"
-                        element={<StoreActiveOrderForm key="StoreForm1" />}
+                        element={<StoreActiveOrderForm key="StoreForm1" setOrderId={setOrderId}/>}
                     />
                     <Route
                         path="/storage/product/acceptance"
@@ -75,7 +81,7 @@ function App() {
                     />
                     <Route
                         path="/storage/order"
-                        element={<StoreOrderForm key="StoreForm5" />}
+                        element={<StorageActiveOrderForm key="StoreForm5" orderId={orderId}/>}
                     />
                 </Routes>
             </BrowserRouter>

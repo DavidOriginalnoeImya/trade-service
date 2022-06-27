@@ -103,8 +103,6 @@ public class ShopWorkerREST {
     @Path("/order/create")
     @Consumes(MediaType.APPLICATION_JSON)
     public void addOrder(@QueryParam("address") String shopAddress, List<Product> products) {
-        LOGGER.info("test");
-
         shopWorkerController.addOrder(products, shopAddress);
     }
 

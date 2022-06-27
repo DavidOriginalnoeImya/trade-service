@@ -116,4 +116,52 @@ public class StoreKeeperController {
 
         return 0;
     }
+
+    public List<String> getActiveOrdersId() {
+        List<String> activeOrdersId = new ArrayList<>();
+
+        for (Row row: dbController.getActiveOrdersId()) {
+            activeOrdersId.add(String.valueOf(row.getInteger("orderid")));
+        }
+
+        return activeOrdersId;
+    }
+
+    public List<Product> getOrderProducts(int orderId) {
+        List<Product> products = new ArrayList<>();
+
+        RowSet<Row> productIdRows = dbController.getProductsForOrder(orderId);
+
+        for (Row productIdRow: productIdRows) {
+            Product product = new Product();
+
+            int productId = productIdRow.getInteger("productid");
+
+            Row productQuantityRow = dbController.getProductQuantityForOrder(productId, orderId);
+
+            if (productQuantityRow != null) {
+                product.setQuantity(String.valueOf(productQuantityRow.getInteger("productquantity")));
+            }
+
+            Row productRow = dbController.getProductById(productId);
+
+            if (productRow != null) {
+                product.setName(productRow.getString("name"))
+                        .setCity(productRow.getString("city"))
+                        .setPrice(productRow.getFloat("price"));
+            }
+
+            products.add(product);
+        }
+
+        return products;
+    }
+
+    public String getOrderShopAddress(int orderId) {
+        return dbController.getOrderShopAddress(orderId);
+    }
+
+    public void closeOrder(int orderId) {
+        dbController.closeOrder(orderId);
+    }
 }

@@ -16,7 +16,7 @@ export type Product = {
     quantity: number;
 }
 
-const StorageOrderForm = () => {
+const StorageCreateOrderForm = () => {
     const [productName, setProductName] = useState("");
     const [productPrice, setProductPrice] = useState("");
     const [productCity, setProductCity] = useState("");
@@ -184,4 +184,4 @@ const StorageOrderForm = () => {
     );
 };
 
-export default StorageOrderForm;
+export default StorageCreateOrderForm;

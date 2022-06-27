@@ -143,6 +143,69 @@ export class RequestService {
         }
     }
 
+    public static async getActiveOrders(authToken: string | undefined) {
+        try {
+            return await axios.get("http://localhost:8080/api/storekeeper/order/active",
+                {
+                    headers: {
+                        "Authorization": "Bearer " + authToken,
+                        "content-type": "application/json",
+                    }
+                }
+            );
+        }
+        catch (e) {
+            console.warn("Ошибка при получении списка активных заказов с сервера")
+        }
+    }
+
+    public static async getOrderProducts(orderId: string, authToken: string | undefined) {
+        try {
+            return await axios.get("http://localhost:8080/api/storekeeper/order/products?id=" + orderId,
+                {
+                    headers: {
+                        "Authorization": "Bearer " + authToken,
+                        "content-type": "application/json",
+                    }
+                }
+            );
+        }
+        catch (e) {
+            console.warn("Ошибка при получении списка товаров с сервера")
+        }
+    }
+
+    public static async getOrderShopAddress(orderId: string, authToken: string | undefined) {
+        try {
+            return await axios.get("http://localhost:8080/api/storekeeper/order/shop?id=" + orderId,
+                {
+                    headers: {
+                        "Authorization": "Bearer " + authToken,
+                        "content-type": "application/json",
+                    }
+                }
+            );
+        }
+        catch (e) {
+            console.warn("Ошибка при получении адреса заказа с сервера")
+        }
+    }
+
+    public static async closeOrder(orderId: string, authToken: string | undefined) {
+        try {
+            return await axios.post("http://localhost:8080/api/storekeeper/order/close?id=" + orderId,
+                {
+                    headers: {
+                        "Authorization": "Bearer " + authToken,
+                    }
+                }
+            );
+        }
+        catch (e) {
+            console.warn("Ошибка при закрытии заказа")
+        }
+    }
+
     public static async getProductCitiesFromShop(shopAddress: string, productName: string, authToken: string | undefined) {
         try {
             return await axios.get("http://localhost:8080/api/storeworker/shop/city?address="
