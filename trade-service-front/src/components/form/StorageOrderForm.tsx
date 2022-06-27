@@ -16,7 +16,7 @@ export type Product = {
     quantity: number;
 }
 
-const ProductSaleForm = () => {
+const StorageOrderForm = () => {
     const [productName, setProductName] = useState("");
     const [productPrice, setProductPrice] = useState("");
     const [productCity, setProductCity] = useState("");
@@ -178,4 +178,4 @@ const ProductSaleForm = () => {
     );
 };
 
-export default ProductSaleForm;
+export default StorageOrderForm;

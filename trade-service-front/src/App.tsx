@@ -2,18 +2,14 @@ import React from 'react';
 import logo from './logo.svg';
 import './App.css';
 import Sidebar from "./components/sidebar/Sidebar";
-import keycloakClient from "./utils/keycloak/keycloakClient";
-import {useKeycloak} from "@react-keycloak/web";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import StoreOrderForm from "./components/form/StoreOrderForm";
 import CertificateForm from "./components/form/CertificateForm";
 import ShopProductSaleForm, {Product} from "./components/form/ProductSaleForm";
 import ProductAcceptForm from "./components/form/ProductAcceptForm";
-import {RequestService} from "./utils/RequestService";
-import fileDownload from "js-file-download";
-import ShopActiveOrderForm from "./components/form/ShopActiveOrderForm";
 import StoreActiveOrderForm from "./components/form/StoreActiveOrderForm";
-import OrderSendForm from "./components/form/OrderSendForm";
+import OrderSendForm from "./components/form/StorageOrderForm";
+import ShopOrderForm from "./components/form/ShopOrderForm";
 
 function App() {
     return (
@@ -39,7 +35,7 @@ function App() {
                     <Route
                         path="/shop/product/order"
                         element={
-                            <ShopProductSaleForm key="ShopForm3" />
+                            <ShopOrderForm key="ShopForm3" />
                         }
                     />
                     <Route
