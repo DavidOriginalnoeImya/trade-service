@@ -24,7 +24,7 @@ const StorageOrderForm = () => {
     const [selectedProductQuantity, setSelectedProductQuantity] = useState(0);
 
     const [selectedProducts, setSelectedProducts] = useState([] as Product[]);
-    const [storageProducts, setStorageProducts] = useState([] as string[]);
+    const [productNames, setProductNames] = useState([] as string[]);
     const [productCities, setProductCities] = useState([] as string[]);
     const [productPrices, setProductPrices] = useState([] as number[]);
 
@@ -40,7 +40,7 @@ const StorageOrderForm = () => {
         RequestService.getStorageProducts(keycloak.token)
             .then((response) => {
                 if (response !== undefined && Array.isArray(response.data)) {
-                    setStorageProducts(response.data);
+                    setProductNames(response.data);
                     setProductName(response.data.length > 0 ? response.data[0] : "");
                 }
             })
@@ -94,7 +94,7 @@ const StorageOrderForm = () => {
                 });
         }
         else {
-            alert("Список товаров пуст")
+            alert("Список товаров пуст");
         }
 
     }
@@ -102,15 +102,21 @@ const StorageOrderForm = () => {
     const addButtonCLicked = (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault();
 
-        if (productName && productCity && selectedProductQuantity > 0)
-            setSelectedProducts([...selectedProducts, {
-                name: productName,
-                city: productCity,
-                quantity: selectedProductQuantity,
-                price: productPrice
-            }]);
+        if (productName && productCity && selectedProductQuantity > 0) {
+            const newProduct = {name: productName, city: productCity, quantity: selectedProductQuantity,
+                price: productPrice} as Product;
+
+            if (!selectedProducts.find((product) => (product.name === newProduct.name &&
+                product.city === newProduct.city && product.price === newProduct.price))) {
+
+                setSelectedProducts([...selectedProducts, newProduct]);
+            }
+            else {
+                alert("Товар уже добавлен в заказ");
+            }
+        }
         else if (selectedProductQuantity === 0)
-            alert("Количество должно быть больше нуля")
+            alert("Количество должно быть больше нуля");
     }
 
     return (
@@ -121,7 +127,7 @@ const StorageOrderForm = () => {
                         <Col className="form-input">
                             <Form.Label> {"Название товара"} </Form.Label>
                             <Form.Select value={productName} onChange={(e) => setProductName(e.target.value)}>
-                                { createOptionList(storageProducts) }
+                                { createOptionList(productNames) }
                             </Form.Select>
                         </Col>
                         <Col className="form-input">
