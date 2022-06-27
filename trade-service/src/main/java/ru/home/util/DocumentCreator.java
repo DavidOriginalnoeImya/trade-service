@@ -5,7 +5,9 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 import ru.home.model.CheckProduct;
 import ru.home.model.Product;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
+import javax.ws.rs.POST;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -22,9 +24,10 @@ public class DocumentCreator {
     @ConfigProperty(name = "document.product.check.name", defaultValue = "product-check.docx")
     String productCheckName;
 
-    private final static Map<String, String> monthNamesByNumber;
+    private Map<String, String> monthNamesByNumber;
 
-    static {
+    @PostConstruct
+    void monthInit() {
         monthNamesByNumber = new HashMap<>();
         monthNamesByNumber.put("1",  "   января     ");
         monthNamesByNumber.put("2",  "   февраля    ");

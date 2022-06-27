@@ -84,10 +84,8 @@ const ShopOrderForm = () => {
     const createOrderButtonClicked = (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault();
 
-        const fileDownload = require('js-file-download');
-
         if (selectedProducts.length > 0) {
-
+            RequestService.addOrder(selectedProducts, shopAddress, keycloak.token);
         }
         else {
             alert("Список товаров пуст")
@@ -102,7 +100,13 @@ const ShopOrderForm = () => {
             const newProduct = { name: productName, city: productCity, quantity: productQuantity,
                 price: productPrice } as Product
 
-            setSelectedProducts([...selectedProducts, newProduct]);
+            if (!selectedProducts.find((product) => (product.name === newProduct.name &&
+                product.city === newProduct.city && product.price === newProduct.price))) {
+                setSelectedProducts([...selectedProducts, newProduct]);
+            }
+            else {
+                alert("Товар уже добавлен в заказ!")
+            }
         }
         else if (productQuantity === 0)
             alert("Количество должно быть больше нуля")

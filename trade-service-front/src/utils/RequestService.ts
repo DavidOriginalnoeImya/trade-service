@@ -105,6 +105,27 @@ export class RequestService {
         }
     }
 
+    public static async addOrder(products: Product[], shopAddress: string, authToken: string | undefined) {
+        console.log("http://localhost:8080/api/storeworker/order/create?address="
+            + shopAddress.replace(" ", "+"));
+
+        try {
+            return await axios.post("http://localhost:8080/api/storeworker/order/create?address="
+                + shopAddress.replace(" ", "+"),
+                JSON.stringify(products),
+                {
+                    headers: {
+                        "Authorization": "Bearer " + authToken,
+                        "content-type": "application/json",
+                    }
+                }
+            );
+        }
+        catch (e) {
+            console.warn("Ошибка при создании нового заказа")
+        }
+    }
+
     public static async getShopProducts(shopAddress: string, authToken: string | undefined) {
         try {
             return await axios.get("http://localhost:8080/api/storeworker/shop/products?address="

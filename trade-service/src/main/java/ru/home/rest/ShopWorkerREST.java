@@ -98,4 +98,14 @@ public class ShopWorkerREST {
                 .ok(shopWorkerController.getProductQuantityFromShop(shopAddress, productName, productCity, productPrice))
                 .build();
     }
+
+    @POST
+    @Path("/order/create")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public void addOrder(@QueryParam("address") String shopAddress, List<Product> products) {
+        LOGGER.info("test");
+
+        shopWorkerController.addOrder(products, shopAddress);
+    }
+
 }

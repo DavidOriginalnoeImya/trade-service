@@ -172,4 +172,22 @@ public class ShopWorkerController {
 
         return 0;
     }
+
+    public void addOrder(List<Product> products, String shopAddress) {
+        int lastOrderId = dbController.getLastOrderId();
+
+        if (lastOrderId >= 0) {
+            lastOrderId += 1;
+
+            dbController.createNewOrder(lastOrderId, shopAddress);
+
+            for (Product product: products) {
+                int productId = dbController.getProductId(product);
+
+                if (productId != -1) {
+                    dbController.addProductToOrder(lastOrderId, productId, Integer.parseInt(product.getQuantity()));
+                }
+            }
+        }
+    }
 }

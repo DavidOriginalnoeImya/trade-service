@@ -15,6 +15,8 @@ import java.util.List;
 public class DbController {
     private static final Logger LOGGER = Logger.getLogger(DbController.class.getSimpleName());
 
+    private static String newOrderStatus = "new";
+
     @Inject
     PgPool client;
 
@@ -180,5 +182,36 @@ public class DbController {
                 .execute(Tuple.of(Integer.parseInt(product.getQuantity()), product.getName(),
                         product.getCity(), product.getPrice(), Integer.parseInt(product.getQuantity())))
                 .await().indefinitely();
+    }
+
+    public int getLastOrderId() {
+        RowSet<Row> rows = client.query("SELECT MAX(orderid) AS max FROM productorder")
+                .execute().await().indefinitely();
+
+        if (rows.rowCount() > 0) {
+            Integer lastOrderId = rows.iterator().next().getInteger("max");
+
+            return (lastOrderId != null) ? lastOrderId : 0;
+        }
+
+        return -1;
+    }
+
+    public void createNewOrder(int orderId, String shopAddress) {
+        if (orderId >= 0) {
+            client.preparedQuery("INSERT INTO productorder (orderid, shopid, status) " +
+                            "VALUES ($1, (SELECT shopid FROM shop WHERE address = $2), $3)")
+                    .execute(Tuple.of(orderId, shopAddress, newOrderStatus)).await().indefinitely();
+        }
+    }
+
+    public void addProductToOrder(int orderId, int productId, int productQuantity) {
+        client.preparedQuery("INSERT INTO includes (orderid, productid, productquantity) VALUES ($1, $2, $3)")
+                .execute(Tuple.of(orderId, productId, productQuantity)).await().indefinitely();
+    }
+
+    public RowSet<Row> getActiveOrdersId() {
+        return client.preparedQuery("SELECT orderid FROM productorder WHERE status = $1")
+                .execute(Tuple.of(newOrderStatus)).await().indefinitely();
     }
 }
