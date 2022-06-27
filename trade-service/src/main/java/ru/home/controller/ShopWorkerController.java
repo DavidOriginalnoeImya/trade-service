@@ -75,6 +75,8 @@ public class ShopWorkerController {
         List<CheckProduct> checkProducts = new ArrayList<>();
 
         for (Product product: products) {
+            dbController.updateShopProducts(product);
+
             checkProducts.add(new CheckProduct()
                     .setName(product.getName())
                     .setPrice(String.valueOf(product.getPrice()))

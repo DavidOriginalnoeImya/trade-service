@@ -172,4 +172,13 @@ public class DbController {
                     .await().indefinitely();
         }
     }
+
+    public void updateShopProducts(Product product) {
+        client.preparedQuery("UPDATE availability SET productquantity = productquantity - $1 " +
+                        "WHERE productid = (SELECT productid from product WHERE name = $2 AND city = $3 " +
+                        "AND ABS(price - $4) <= 0.01) AND productquantity - $5 >= 0")
+                .execute(Tuple.of(Integer.parseInt(product.getQuantity()), product.getName(),
+                        product.getCity(), product.getPrice(), Integer.parseInt(product.getQuantity())))
+                .await().indefinitely();
+    }
 }

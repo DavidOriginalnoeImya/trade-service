@@ -15,7 +15,7 @@ const Sidebar = () => {
     },[keycloak.token])
 
     return (
-        <ProSidebar>
+        <ProSidebar style={{height: "150%"}}>
             <SidebarHeader className="sidebar-header">
                 Система фирменной торговли
             </SidebarHeader>
