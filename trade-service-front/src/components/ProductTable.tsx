@@ -43,7 +43,7 @@ const ProductTable: FC<IProductTable> = ({ products, setProducts}) => {
                         </tr>
                     )) :
                     <tr>
-                        <td style={{textAlign: "center"}} colSpan={5}>Список пуст</td>
+                        <td style={{textAlign: "center"}} colSpan={6}>Список пуст</td>
                     </tr>
             }
             </tbody>
