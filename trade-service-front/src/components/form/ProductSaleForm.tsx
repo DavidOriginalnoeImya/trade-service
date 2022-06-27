@@ -117,13 +117,18 @@ const ProductSaleForm = () => {
     const addButtonCLicked = (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault();
 
-        if (productName && productCity && selectedProductQuantity > 0)
-            setSelectedProducts([...selectedProducts, {
-                name: productName,
-                city: productCity,
-                quantity: selectedProductQuantity,
-                price: productPrice
-            }]);
+        if (productName && productCity && selectedProductQuantity > 0) {
+            const newProduct = { name: productName, city: productCity, quantity: selectedProductQuantity,
+                price: productPrice } as Product
+
+            if (!selectedProducts.find((product) => (product.name === newProduct.name &&
+                product.city === newProduct.city && product.price === newProduct.price))) {
+                setSelectedProducts([...selectedProducts, newProduct]);
+            }
+            else {
+                alert("Товар уже есть в чеке!")
+            }
+        }
         else if (selectedProductQuantity === 0)
             alert("Количество должно быть больше нуля")
     }

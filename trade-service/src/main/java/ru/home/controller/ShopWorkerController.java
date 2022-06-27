@@ -71,7 +71,7 @@ public class ShopWorkerController {
                 jwt != null ? jwt.getClaim("family_name") + " " + jwt.getClaim("given_name") : "");
     }
 
-    public byte[] createCheck(List<Product> products) {
+    public byte[] createCheck(String shopAddress, List<Product> products) {
         List<CheckProduct> checkProducts = new ArrayList<>();
 
         for (Product product: products) {

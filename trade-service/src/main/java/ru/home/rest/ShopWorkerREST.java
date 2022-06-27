@@ -41,9 +41,9 @@ public class ShopWorkerREST {
     @Path("/check/create")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
-    public Response createCheck(List<Product> products) {
+    public Response createCheck(@QueryParam("address") String shopAddress, List<Product> products) {
         return Response
-                .ok(shopWorkerController.createCheck(products))
+                .ok(shopWorkerController.createCheck(shopAddress, products))
                 .header("Content-Disposition", "attachment; filename=\"Чек.docx\"")
                 .build();
     }
