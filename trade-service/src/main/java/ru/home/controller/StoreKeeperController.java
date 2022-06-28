@@ -130,28 +130,13 @@ public class StoreKeeperController {
     public List<Product> getOrderProducts(int orderId) {
         List<Product> products = new ArrayList<>();
 
-        RowSet<Row> productIdRows = dbController.getProductsForOrder(orderId);
+        RowSet<Row> productRows = dbController.getProductsForOrder(orderId);
 
-        for (Row productIdRow: productIdRows) {
-            Product product = new Product();
-
-            int productId = productIdRow.getInteger("productid");
-
-            Row productQuantityRow = dbController.getProductQuantityForOrder(productId, orderId);
-
-            if (productQuantityRow != null) {
-                product.setQuantity(String.valueOf(productQuantityRow.getInteger("productquantity")));
-            }
-
-            Row productRow = dbController.getProductById(productId);
-
-            if (productRow != null) {
-                product.setName(productRow.getString("name"))
-                        .setCity(productRow.getString("city"))
-                        .setPrice(productRow.getFloat("price"));
-            }
-
-            products.add(product);
+        for (Row productRow: productRows) {
+            products.add(new Product().setName(productRow.getString("name"))
+                    .setPrice(productRow.getFloat("price"))
+                    .setCity(productRow.getString("city"))
+                    .setQuantity(String.valueOf(productRow.getInteger("productquantity"))));
         }
 
         return products;

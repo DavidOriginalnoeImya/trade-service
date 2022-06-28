@@ -216,31 +216,9 @@ public class DbController {
     }
 
     public RowSet<Row> getProductsForOrder(int orderId) {
-        return client.preparedQuery("SELECT productid FROM includes WHERE orderid = $1")
+        return client.preparedQuery("SELECT product.name, product.city, product.price, includes.productquantity FROM product, includes " +
+                        "WHERE product.productid = includes.productid AND includes.orderid = $1")
                 .execute(Tuple.of(orderId)).await().indefinitely();
-    }
-
-    public Row getProductById(int productId) {
-        RowSet<Row> rowSet =  client.preparedQuery("SELECT name, city, price FROM product WHERE productid = $1")
-                .execute(Tuple.of(productId)).await().indefinitely();
-
-        if (rowSet.rowCount() > 0) {
-            return rowSet.iterator().next();
-        }
-
-        return null;
-    }
-
-    public Row getProductQuantityForOrder(int productId, int orderId) {
-        RowSet<Row> rowSet =  client.preparedQuery("SELECT productQuantity FROM includes " +
-                        "WHERE productid = $1 AND orderid = $2")
-                .execute(Tuple.of(productId, orderId)).await().indefinitely();
-
-        if (rowSet.rowCount() > 0) {
-            return rowSet.iterator().next();
-        }
-
-        return null;
     }
 
     public String getOrderShopAddress(int orderId) {
