@@ -39,6 +39,18 @@ public class DbController {
         return -1;
     }
 
+    public int getProductMinQuantity(int productId) {
+        RowSet<Row> rows = client.preparedQuery("SELECT minquantity FROM Product WHERE productid = $1")
+                .execute(Tuple.of(productId))
+                .await().indefinitely();
+
+        if (rows.rowCount() > 0) {
+            return rows.iterator().next().getInteger("minquantity");
+        }
+
+        return -1;
+    }
+
     public int getAdmSlotId(int productId, int productQuantity) {
         RowSet<Row> rows = client.preparedQuery("SELECT slotid FROM Storage " +
                         "WHERE productid = $1 AND capacity - productQuantity >= $2")
@@ -237,4 +249,5 @@ public class DbController {
         client.preparedQuery("UPDATE productorder SET status = 'closed' WHERE orderid = $1")
                 .execute(Tuple.of(orderId)).await().indefinitely();
     }
+
 }

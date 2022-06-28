@@ -23,6 +23,7 @@ const ShopOrderForm = () => {
     const [productQuantity, setProductQuantity] = useState(0);
     const [selectedProducts, setSelectedProducts] = useState([] as Product[]);
     const [shopAddress, setShopAddress] = useState("");
+    const [minProductQuantity, setMinProductQuantity] = useState(0);
 
     const [shopAddresses, setShopAddresses] = useState([] as string[]);
     const [productNames, setProductNames] = useState([] as string[]);
@@ -80,6 +81,17 @@ const ShopOrderForm = () => {
                 })
         }
     }, [productName, productCity])
+
+    useEffect(() => {
+        if (productName && productCity && shopAddress && productPrice) {
+            RequestService.getProductRequiredQuantity(shopAddress, productName, productCity, productPrice, keycloak.token)
+                .then((response) => {
+                    if (response !== undefined) {
+                        setMinProductQuantity(response.data);
+                    }
+                })
+        }
+    }, [shopAddress, productName, productCity, productPrice])
 
     const createOrderButtonClicked = (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault();
@@ -152,6 +164,11 @@ const ShopOrderForm = () => {
                                     onChange={(value: number) => setProductQuantity(value)}
                                     style={{input: { height: "38px", width: "135px" }}}
                                 />
+                                {minProductQuantity > 0 &&
+                                    <Form.Label style={{marginTop: "5px", marginLeft: "45px"}}>
+                                        { "Необходимое количество: " + minProductQuantity + " шт." }
+                                    </Form.Label>
+                                }
                             </div>
                         </Col>
                     </Form.Group>

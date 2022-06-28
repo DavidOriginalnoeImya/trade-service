@@ -224,6 +224,28 @@ export class RequestService {
         }
     }
 
+    public static async getProductRequiredQuantity(shopAddress: string, productName: string,
+                                                   productCity: string, productPrice: string,
+                                                   authToken: string | undefined) {
+        try {
+            return await axios.get("http://localhost:8080/api/storeworker/product/quantity?address="
+                + shopAddress.replace(" ", "+") + "&name=" +
+                productName.replace(" ", "+") + "&city=" +
+                productCity.replace(" ", "+") + "&price=" + productPrice
+                ,
+                {
+                    headers: {
+                        "Authorization": "Bearer " + authToken,
+                        "content-type": "application/json",
+                    }
+                }
+            );
+        }
+        catch (e) {
+            console.warn("Ошибка при получении данных с сервера")
+        }
+    }
+
     public static async getProductPricesFromShop(shopAddress: string, productName: string,
                                                  productCity: string, authToken: string | undefined) {
         try {

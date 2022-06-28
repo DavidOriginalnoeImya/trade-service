@@ -99,6 +99,19 @@ public class ShopWorkerREST {
                 .build();
     }
 
+    @GET
+    @Path("/product/quantity")
+    @Produces(MediaType.TEXT_PLAIN)
+    public Response getRequiredNumberForProduct(@QueryParam("address") String shopAddress,
+                                                @QueryParam("name") String productName,
+                                                @QueryParam("city") String productCity,
+                                                @QueryParam("price") String productPrice) {
+        return Response
+                .ok(shopWorkerController.getRequiredNumberForProduct(new Product()
+                        .setName(productName).setCity(productCity).setPrice(Float.parseFloat(productPrice)), shopAddress))
+                .build();
+    }
+
     @POST
     @Path("/order/create")
     @Consumes(MediaType.APPLICATION_JSON)

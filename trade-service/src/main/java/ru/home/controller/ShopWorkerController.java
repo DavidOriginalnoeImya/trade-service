@@ -15,6 +15,7 @@ import ru.home.util.DocumentCreator;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -71,6 +72,7 @@ public class ShopWorkerController {
                 jwt != null ? jwt.getClaim("family_name") + " " + jwt.getClaim("given_name") : "");
     }
 
+    @Transactional
     public byte[] createCheck(String shopAddress, List<Product> products) {
         List<CheckProduct> checkProducts = new ArrayList<>();
 
@@ -84,7 +86,6 @@ public class ShopWorkerController {
                     .setSum(String.valueOf(product.getPrice() * Integer.parseInt(product.getQuantity())))
                     .setCode(String.valueOf(dbController.getProductId(product))));
         }
-
 
         return documentCreator.writeCheck(checkProducts);
     }
@@ -189,5 +190,28 @@ public class ShopWorkerController {
                 }
             }
         }
+    }
+
+    public int getRequiredNumberForProduct(Product product, String shopAddress) {
+        int productId = dbController.getProductId(product);
+
+        if (productId != -1) {
+            int shopId = dbController.getShopId(shopAddress);
+
+            if (shopId != -1) {
+                RowSet<Row> row = dbController.getProductFromShop(shopId, productId);
+
+                if (row.rowCount() > 0) {
+                    int minQuantity = dbController.getProductMinQuantity(productId),
+                    curQuantity = row.iterator().next().getInteger("productquantity");
+
+                    if (minQuantity > curQuantity) {
+                        return 2 * minQuantity - curQuantity;
+                    }
+                }
+            }
+        }
+
+        return 0;
     }
 }
