@@ -41,7 +41,8 @@ const StorageActiveOrderForm: FC<IStorageActiveOrderForm> = ({orderId}) => {
     const closeOrderButtonClicked = (event: React.FormEvent) => {
         event.preventDefault();
 
-        RequestService.closeOrder(orderId, keycloak.token);
+        RequestService.closeOrder(orderId, keycloak.token)
+            .then(() => {   });
 
         navigate("/storage/order/active");
     }
