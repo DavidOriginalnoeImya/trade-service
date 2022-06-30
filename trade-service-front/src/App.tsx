@@ -12,13 +12,27 @@ import OrderSendForm from "./components/form/StorageCreateOrderForm";
 import ShopOrderForm from "./components/form/ShopOrderForm";
 import {ToastContainer} from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
+import {useKeycloak} from "@react-keycloak/web";
 
 function App() {
+    const [saleFormPath, setSaleFormPath] = useState("/shop/product/sale")
+    const [activeOrderFormPath, setActiveOrderFormPath] = useState("/storage/order/active")
+    const [acceptanceOrderFormPath, setAcceptanceOrderFormPath] = useState("/shop/product/acceptance")
     const [orderId, setOrderId] = useState("");
 
+    const { keycloak } = useKeycloak();
+
     useEffect(() => {
-        console.log(orderId)
-    }, [orderId])
+        if (keycloak.hasRealmRole("storeworker")) {
+            setAcceptanceOrderFormPath("/")
+        }
+        else if (keycloak.hasRealmRole("storekeeper")) {
+            setActiveOrderFormPath("/")
+        }
+        else if (keycloak.hasRealmRole("salesman")) {
+            setSaleFormPath("/")
+        }
+    }, [keycloak.token])
 
     return (
         <div className="App">
@@ -26,7 +40,7 @@ function App() {
                 <Sidebar/>
                 <Routes>
                     <Route
-                        path="/shop/product/acceptance"
+                        path={acceptanceOrderFormPath}
                         element={
                             <ProductAcceptForm
                                 key="ShopForm1"
@@ -35,7 +49,7 @@ function App() {
                         }
                     />
                     <Route
-                        path="/shop/product/sale"
+                        path={saleFormPath}
                         element={
                             <ShopProductSaleForm key="ShopForm2" />
                         }
@@ -55,7 +69,7 @@ function App() {
                         />}
                     />
                     <Route
-                        path="/storage/order/active"
+                        path={activeOrderFormPath}
                         element={<StoreActiveOrderForm key="StoreForm1" setOrderId={setOrderId}/>}
                     />
                     <Route
