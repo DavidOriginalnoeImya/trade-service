@@ -18,15 +18,12 @@ public class UserInfoREST {
 
     private static final List<UserFunctionDTO> shopWorkerFunctions = List.of(
             new UserFunctionDTO().setFunctionName("Прием товара в магазин").setFunctionUri("/shop/product/acceptance"),
-            new UserFunctionDTO().setFunctionName("Продажа товара").setFunctionUri("/shop/product/sale"),
             new UserFunctionDTO().setFunctionName("Заказ товара со склада").setFunctionUri("/shop/product/order"),
-            new UserFunctionDTO().setFunctionName("Получение справки о товаре").setFunctionUri("/shop/product/certificate"),
+            new UserFunctionDTO().setFunctionName("Получение справки о товаре").setFunctionUri("/shop/product/certificate")
+    );
 
-            new UserFunctionDTO().setFunctionName("Список активных заказов").setFunctionUri("/storage/order/active"),
-            new UserFunctionDTO().setFunctionName("Прием товара на склад").setFunctionUri("/storage/product/acceptance"),
-            new UserFunctionDTO().setFunctionName("Отпуск товара в магазин").setFunctionUri("/storage/product/release"),
-            new UserFunctionDTO().setFunctionName("Получение справки о товаре").setFunctionUri("/storage/product/certificate")
-
+    private static final List<UserFunctionDTO> salesmanFunctions = List.of(
+            new UserFunctionDTO().setFunctionName("Продажа товара").setFunctionUri("/shop/product/sale")
     );
 
     private static final List<UserFunctionDTO> storeKeeperFunctions = List.of(
@@ -51,6 +48,9 @@ public class UserInfoREST {
         }
         else if (securityIdentity.hasRole("storekeeper")) {
             return Response.ok(storeKeeperFunctions).build();
+        }
+        else if (securityIdentity.hasRole("salesman")) {
+            return Response.ok(salesmanFunctions).build();
         }
         else return Response.status(425, "Unknown role").build();
     }
