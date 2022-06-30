@@ -10,6 +10,8 @@ import ProductAcceptForm from "./components/form/ProductAcceptForm";
 import StoreActiveOrderForm from "./components/form/StoreActiveOrderForm";
 import OrderSendForm from "./components/form/StorageCreateOrderForm";
 import ShopOrderForm from "./components/form/ShopOrderForm";
+import {ToastContainer} from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
     const [orderId, setOrderId] = useState("");
@@ -85,6 +87,7 @@ function App() {
                     />
                 </Routes>
             </BrowserRouter>
+            <ToastContainer/>
         </div>
     );
 }

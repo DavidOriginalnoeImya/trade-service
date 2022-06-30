@@ -1,5 +1,6 @@
 import axios from "axios";
 import {Product} from "../components/form/ProductSaleForm";
+import {toast} from "react-toastify";
 
 export type StorageProductAcceptDTO = {
     name: string,
@@ -49,7 +50,7 @@ export class RequestService {
             );
         }
         catch (e) {
-            console.warn("Ошибка при получении сертификата с сервера")
+            toast("Ошибка при получении сертификата", {type: "error"})
         }
     }
 
@@ -67,7 +68,7 @@ export class RequestService {
             );
         }
         catch (e) {
-            console.warn("Ошибка при получении чека с сервера")
+            alert("Ошибка при попытке выполнить операцию продажи")
         }
     }
 
@@ -85,7 +86,7 @@ export class RequestService {
             );
         }
         catch (e) {
-            console.warn("Ошибка при получении накладной с сервера")
+            toast("Ошибка при получении накладной с сервера", {type: "error"})
         }
     }
 
@@ -122,7 +123,7 @@ export class RequestService {
             );
         }
         catch (e) {
-            console.warn("Ошибка при создании нового заказа")
+            toast("Ошибка при создании нового заказа", {type: "error"})
         }
     }
 
@@ -155,7 +156,7 @@ export class RequestService {
             );
         }
         catch (e) {
-            console.warn("Ошибка при получении списка активных заказов с сервера")
+            toast("Ошибка получения списка активных заказов", {type: "error"})
         }
     }
 
@@ -202,7 +203,7 @@ export class RequestService {
             );
         }
         catch (e) {
-            console.warn("Ошибка при закрытии заказа")
+            toast("Ошибка при закрытии заказа", {type: "error"})
         }
     }
 
@@ -371,7 +372,7 @@ export class RequestService {
             );
         }
         catch (e) {
-            console.warn("Ошибка приема товара")
+            toast("Ошибка приема товара", {type: "error"})
         }
     }
 
@@ -388,7 +389,7 @@ export class RequestService {
             );
         }
         catch (e) {
-            console.warn("Ошибка приема товара")
+            toast("Ошибка приема товара", {type: "error"})
         }
     }
 }
