@@ -43,7 +43,7 @@ public class ShopWorkerREST {
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response createCheck(@QueryParam("address") String shopAddress, List<Product> products) {
         return Response
-                .ok(shopWorkerController.createCheck(shopAddress, products))
+                .ok(shopWorkerController.createCheck(products))
                 .header("Content-Disposition", "attachment; filename=\"Чек.docx\"")
                 .build();
     }

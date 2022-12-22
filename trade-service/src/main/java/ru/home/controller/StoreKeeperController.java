@@ -92,7 +92,8 @@ public class StoreKeeperController {
 
     public byte[] createInvoice(List<Product> products) {
         dbController.updateStorageSlots(products);
-        return documentCreator.writeInvoice(products);
+        return documentCreator.writeInvoice(products,
+                jwt != null ? jwt.getClaim("family_name") + " " + jwt.getClaim("given_name") : "");
     }
 
     public List<Float> getProductPrices(String productName, String productCity) {

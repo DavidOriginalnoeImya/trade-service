@@ -28,7 +28,7 @@ public class DbController {
 
     public int getProductId(Product product) {
         RowSet<Row> rows = client.preparedQuery("SELECT productid FROM Product " +
-                        "WHERE name = $1 AND city = $2 AND ABS(price - $3) <= 0.001")
+                        "WHERE name = $1 AND city = $2 AND ABS(price - $3) <= 0.01")
                 .execute(Tuple.of(product.getName(), product.getCity(), product.getPrice()))
                 .await().indefinitely();
 

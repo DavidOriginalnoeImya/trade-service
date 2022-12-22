@@ -43,9 +43,9 @@ public class DocumentCreator {
         monthNamesByNumber.put("12", "   декабря    ");
     }
 
-    public byte[] writeInvoice(List<Product> products) {
+    public byte[] writeInvoice(List<Product> products, String formerName) {
         try (XWPFDocument document = new XWPFDocument()) {
-            addFormerParagraph(document, "Иванов Д.А.");
+            addFormerParagraph(document, formerName);
             addFormDateParagraph(document);
             document.createParagraph();
             addTitleParagraph(document, "Товарная накладная");
@@ -68,12 +68,12 @@ public class DocumentCreator {
         return "Check creation error".getBytes(StandardCharsets.UTF_8);
     }
 
-    public byte[] writeCheck(List<CheckProduct> products) {
+    public byte[] writeCheck(List<CheckProduct> products, String formerName) {
         try (XWPFDocument document = new XWPFDocument()) {
-            addFormerParagraph(document, "Иванов Д.А.");
+            addFormerParagraph(document, formerName);
             addFormDateParagraph(document);
             document.createParagraph();
-            addTitleParagraph(document, "Товарный чек №3");
+            addTitleParagraph(document, "Товарный чек");
             document.createParagraph();
             addTable(
                     document,

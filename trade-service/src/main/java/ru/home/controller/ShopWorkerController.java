@@ -73,7 +73,7 @@ public class ShopWorkerController {
     }
 
     @Transactional
-    public byte[] createCheck(String shopAddress, List<Product> products) {
+    public byte[] createCheck(List<Product> products) {
         List<CheckProduct> checkProducts = new ArrayList<>();
 
         for (Product product: products) {
@@ -87,7 +87,8 @@ public class ShopWorkerController {
                     .setCode(String.valueOf(dbController.getProductId(product))));
         }
 
-        return documentCreator.writeCheck(checkProducts);
+        return documentCreator.writeCheck(checkProducts,
+                jwt != null ? jwt.getClaim("family_name") + " " + jwt.getClaim("given_name") : "");
     }
 
     public void addProduct(Product product, String shopAddress) {

@@ -5,6 +5,8 @@ pom.xml.releaseBackup
 pom.xml.versionsBackup
 release.properties
 
+!2.docx
+
 # Eclipse
 .project
 .classpath
